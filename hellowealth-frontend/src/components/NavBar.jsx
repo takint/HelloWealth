@@ -1,29 +1,31 @@
 import { Link } from 'react-router-dom'
 const NavBar = () => {
+  const menuItems = [
+    { url: '/', label: 'Home', onMenuItemClick: () => {} },
+    { url: '/login', label: 'Login', onMenuItemClick: () => {} },
+    { url: '/register', label: 'Register', onMenuItemClick: () => {} },
+    { url: '/news', label: 'News', onMenuItemClick: () => {} },
+    { url: '/contact-us', label: 'Contact us', onMenuItemClick: () => {} },
+    { url: '/our-service', label: 'Our service', onMenuItemClick: () => {} },
+    {
+      url: '/forgot-password',
+      label: 'Forgot password',
+      onMenuItemClick: () => {},
+    },
+  ]
+
   return (
     <nav>
       <ul>
-        <li>
-          <Link to='/'>Home</Link>
-        </li>
-        <li>
-          <Link to='/login'>Login</Link>
-        </li>
-        <li>
-          <Link to='/register'>Register</Link>
-        </li>
-        <li>
-          <Link to='/contact-us'>Contact us</Link>
-        </li>
-        <li>
-          <Link to='/our-service'>Our service</Link>
-        </li>
-        <li>
-          <Link to='/forgot-password'>Forgot password</Link>
-        </li>
-        <li>
-          <Link to='/news'>News</Link>
-        </li>
+        {menuItems.map((item, idx) => {
+          return (
+            <li key={idx}>
+              <Link to={item.url} onClick={item.onMenuItemClick}>
+                {item.label}
+              </Link>
+            </li>
+          )
+        })}
       </ul>
     </nav>
   )
