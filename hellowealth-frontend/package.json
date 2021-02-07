@@ -21,7 +21,7 @@
   },
   "scripts": {
     "start": "npm run watch:css & react-scripts start",
-    "build": "npm run build:css react-scripts build",
+    "build": "npm run build:css & react-scripts build",
     "build:css": "postcss src/styles/tailwind.css -o src/styles/index.css",
     "watch:css": "postcss src/styles/tailwind.css -o src/styles/index.css",
     "test": "react-scripts test",
