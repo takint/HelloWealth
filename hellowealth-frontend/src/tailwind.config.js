@@ -3,8 +3,8 @@ module.exports = {
   darkMode: false, // or 'media' or 'class'
   theme: {
     fontFamily: {
-      display: ["Helvetica", "sans-serif"],
-      body: ["Helvetica-Neue", "sans-serif"],
+      display: ["Belleza", "sans-serif"],
+      body: ["Noto+Sans", "sans-serif"],
     },
     extend: {
       colors: {
@@ -19,6 +19,8 @@ module.exports = {
           800: "#424242",
           900: "#212121",
         },
+        blue: '#030730',
+        pink: '#f9f8f7',
       },
     },
   },
