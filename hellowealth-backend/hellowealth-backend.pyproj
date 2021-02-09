@@ -48,6 +48,8 @@
     <Compile Include="hellowealth_backend\wsgi.py" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include=".ebextensions\django.config" />
+    <Content Include=".ebextensions\db-migrate.config" />
     <Content Include="hellowealth_backend\__pycache__\settings.cpython-39.pyc" />
     <Content Include="hellowealth_backend\__pycache__\urls.cpython-39.pyc" />
     <Content Include="hellowealth_backend\__pycache__\__init__.cpython-39.pyc" />
@@ -58,6 +60,7 @@
     <Folder Include="hellowealth_backend\api\" />
     <Folder Include="hellowealth_backend\api\migrations\" />
     <Folder Include="hellowealth_backend\__pycache__\" />
+    <Folder Include=".ebextensions\" />
   </ItemGroup>
   <ItemGroup>
     <Interpreter Include="env\">
