@@ -1,4 +1,3 @@
-import './styles/index.css'
 import { GlobalStyle } from './styles/global.styles'
 import React from 'react'
 import ReactDOM from 'react-dom'
