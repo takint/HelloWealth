@@ -4,7 +4,7 @@ import { HomeMenu } from '../styles/global.styles'
 const NavBar = () => {
   const menuItems = [
     { url: '/', label: 'Home', onMenuItemClick: () => {} },
-    { url: '/login', label: 'Login', onMenuItemClick: () => {} },
+    { url: '/login', label: 'Log In', onMenuItemClick: () => {} },
     { url: '/register', label: 'Register', onMenuItemClick: () => {} },
     { url: '/news', label: 'News', onMenuItemClick: () => {} },
     { url: '/our-service', label: 'Our service', onMenuItemClick: () => {} },

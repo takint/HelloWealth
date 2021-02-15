@@ -29,7 +29,7 @@ export const HomeMenu = styled.ul`
 `
 
 export const PageLayout = styled.div`
-    ${tw`flex flex-col bg-pink h-full lg:flex-row`}
+  ${tw`flex flex-col bg-pink h-full lg:flex-row`}
 `
 
 export const PageLeftCol = styled.div`
@@ -65,5 +65,22 @@ export const Spinner = styled.div`
     100% {
       transform: rotate(360deg);
     }
+  }
+`
+
+export const ErrorMsg = styled.div`
+  ${tw`text-red font-display`}
+`
+
+export const FormGroup = styled.div`
+  ${tw`flex flex-col p-2`}
+`
+
+export const FormInput = styled.input`
+  ${tw`h-10`}
+  border: 2px solid rgba(114, 121, 140, 0.8);
+
+  ::placeholder {
+    ${tw`text-gray`}
   }
 `
