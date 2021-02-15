@@ -352,4 +352,3 @@ hellowealth-backend/env/
 *.eslintcache
 hellowealth-backend/static/
 hellowealth-backend/.ebextensions/
-*.css
