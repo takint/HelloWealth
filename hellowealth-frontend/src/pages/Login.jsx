@@ -81,7 +81,7 @@ export const LoginPage = ({ pageHeader, errorMessage }) => {
               <FormGroup>
                 <label>Your Email</label>
                 <FormInput
-                  type='text'
+                  type='email'
                   name='email'
                   id='email'
                   placeholder='Enter your email'
