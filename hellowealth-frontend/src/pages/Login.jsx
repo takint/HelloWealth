@@ -36,13 +36,20 @@ export const LoginPage = ({ pageHeader, errorMessage }) => {
 
     const response = await login(values.email, values.password)
     if (response.user) {
-      //setCookie(JWT_COOKIE_DASHBOARD, response.token)
-
+      //setCookie(JWT_COOKIE_DASHBOARD, response.access_token)
       // TODO: Get user data: assetEquities, watchedEquities, accountBalance
+
       userContext.setContext({
         ...userContext,
-        token: response.token,
-        userProfile: response.user,
+        token: response.access_token,
+        refresh_token: response.refresh_token,
+        userProfile: {
+          userId: response.pk,
+          username: response.username,
+          email: response.email,
+          firstName: response.first_name,
+          lastName: response.last_name,
+        },
       })
       setLoading(false)
       setSuccess(true)

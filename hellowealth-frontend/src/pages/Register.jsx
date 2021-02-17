@@ -3,7 +3,7 @@ import { Formik } from 'formik'
 import { Form } from 'reactstrap'
 import { Link } from 'react-router-dom'
 import { ErrorMsg, FormGroup, FormInput } from '../styles/global.styles'
-import { login } from '../services/api'
+import { signUp } from '../services/api'
 import { dynamicValidation } from '../services/helper'
 
 export const RegisterPage = ({ pageHeader, errorMessage }) => {
@@ -24,7 +24,7 @@ export const RegisterPage = ({ pageHeader, errorMessage }) => {
     setLoading(true)
     setRegisterError(false)
 
-    const response = await login(values.email, values.password)
+    const response = await signUp(values)
 
     if (response.user) {
       // TODO: redirect to login

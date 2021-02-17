@@ -4,7 +4,14 @@ import { createContext } from 'react'
 // user profile
 export const initialUserContext = {
   token: null,
-  userProfile: { userId: null, name: '', email: '', image: null },
+  refresh_token: null,
+  userProfile: {
+    userId: 0,
+    username: '',
+    email: '',
+    firstName: '',
+    lastName: '',
+  },
   alerts: [],
   assetEquities: [],
   watchedEquities: [],

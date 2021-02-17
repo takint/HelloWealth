@@ -108,3 +108,9 @@ export const login = async (email, password) => {
 export const logout = async () => {
   return await apiCall(ENDPOINTS.logout, {}, 'post')
 }
+
+
+// logout
+export const signUp = async (data) => {
+  return await apiCall(ENDPOINTS.logout, data, 'post')
+}
