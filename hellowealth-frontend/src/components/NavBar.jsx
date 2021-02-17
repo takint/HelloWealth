@@ -16,9 +16,13 @@ const NavBar = () => {
         {menuItems.map((item, idx) => {
           return (
             <li key={idx}>
-              <Link to={item.url} onClick={item.onMenuItemClick}>
-                {item.label}
-              </Link>
+              {item.url === '/news' ? (
+                <a href='/news'>{item.label}</a>
+              ) : (
+                <Link to={item.url} onClick={item.onMenuItemClick}>
+                  {item.label}
+                </Link>
+              )}
             </li>
           )
         })}
