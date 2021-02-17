@@ -6,7 +6,9 @@ export const NewsPage = () => {
         data-width='90%'
         data-height='100%'
         href='https://twitter.com/Nasdaq?ref_src=twsrc%5Etfw'
-      ></a>
+      >
+        Tweets from NASDAQ
+      </a>
     </div>
   )
 }
