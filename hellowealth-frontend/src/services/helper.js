@@ -192,3 +192,49 @@ export const countDecimals = (value) => {
   if (!value || Math.floor(value) === value) return 0
   return value.toString().split('.')[1].length || 0
 }
+
+//Check a variable is null or empty
+export const isNullOrEmpty = (input) => {
+  // Null or empty
+  if (input === null || input === undefined || input === '') {
+    return true
+  }
+
+  // value = False
+  if (input === 'False') {
+    return true
+  }
+
+  // Array empty
+  if (typeof input.length === 'number' && typeof input !== 'function') {
+    return !input.length
+  }
+
+  // Blank string like '   '
+  if (typeof input === 'string' && input.match(/\S/) === null) {
+    return true
+  }
+
+  // Object empty
+  if (input.constructor === Object && Object.keys(input).length === 0) {
+    return true
+  }
+
+  return false
+}
+
+// Map data from API to dropdown list or autocomplete
+export const buildEquitiesOptions = (data, key) => {
+  if (!isNullOrEmpty(data)) {
+    const obj = { label: key, options: [] }
+    obj.options = data.map((item) => {
+      return {
+        value: item.symbol || item.shortname,
+        label: `${item.symbol} (${item.longname || item.shortname})`,
+        type: key,
+        data: item,
+      }
+    })
+    return obj
+  }
+}

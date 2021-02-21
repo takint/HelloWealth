@@ -20,12 +20,37 @@ export const GlobalStyle = createGlobalStyle`
   }
 `
 
+export const colors = {
+  primary: '#030730',
+  white: '#FFF',
+  black: '#000',
+  gray: '#eeeeee',
+  grey: '#343740',
+  greyMedium: '#444444',
+  greyMediumOpacity: (opacity) => `rgba(114, 121, 140, ${opacity || '1'})`,
+}
+
+export const FONT_FAMILIES = {
+  display: 'Belleza, sans-serif',
+  body: 'Noto+Sans, sans-serif',
+}
+
+export const FONT_WEIGHTS = {
+  regular: 300,
+  medium: 500,
+  bold: 700,
+}
+
 export const HomeMenu = styled.ul`
   ${tw`flex justify-end font-display flex-col text-2xl lg:flex-row`}
 
   & > li {
     ${tw`mx-1 px-2`}
   }
+`
+
+export const UserMenu = styled.div`
+  ${tw`flex flex-col items-center justify-around p-2 bg-blue text-white lg:flex-row lg:p-4 `}
 `
 
 export const PageLayout = styled.div`
@@ -84,3 +109,117 @@ export const FormInput = styled.input`
     ${tw`text-gray`}
   }
 `
+
+export const ReactSelectStyles = {
+  container: (styles, state) => ({
+    ...styles,
+    zIndex: state.selectProps.menuIsOpen ? 9999 : 'unset',
+  }),
+
+  valueContainer: (styles) => ({
+    ...styles,
+    '@media (max-width: 768px)': {
+      '.more-info': {
+        display: 'none',
+      },
+    },
+  }),
+  control: (styles, state) => ({
+    ...styles,
+    color: 'rgba(114, 121, 140, .6)',
+    minHeight: '3rem',
+    // Make the same with bootstrap select style
+    border:
+      state.selectProps.className === 'invalid'
+        ? '2px solid #dc3545 !important'
+        : state.isFocused
+        ? '2px solid #80bdff'
+        : '2px solid rgba(114 , 121, 140, .2)',
+    boxShadow:
+      state.isFocused && state.selectProps.className === 'invalid'
+        ? '0 0 0 0.2rem rgba(220, 53, 69, 0.2)'
+        : state.isFocused
+        ? '0 0 0 0.2rem rgba(0, 123, 255, 0.25)'
+        : 'none',
+    '&:hover': {
+      border: state.isFocused
+        ? '2px solid #80bdff'
+        : '2px solid rgba(114 , 121, 140, .2)',
+    },
+  }),
+  dropdownIndicator: (styles) => ({
+    ...styles,
+    padding: 12,
+    color: colors.primary,
+    '> svg': {
+      fill: colors.primary,
+    },
+  }),
+  clearIndicator: () => ({}),
+  indicatorSeparator: (styles) => ({
+    ...styles,
+    display: 'none',
+  }),
+  singleValue: (styles) => ({
+    ...styles,
+    color: colors.grey,
+  }),
+  multiValue: (styles) => ({
+    ...styles,
+    backgroundColor: colors.primary,
+    padding: 0,
+    color: colors.white,
+  }),
+  multiValueLabel: (styles, { data }) => ({
+    ...styles,
+    color: data.color,
+    fontFamily: FONT_FAMILIES.display,
+    fontWeight: FONT_WEIGHTS.medium,
+  }),
+  multiValueRemove: (styles, { data }) => ({
+    ...styles,
+    color: data.color,
+    backgroundColor: colors.primary,
+    cursor: 'pointer',
+    ':hover': {
+      backgroundColor: data.color,
+      color: data.color,
+    },
+  }),
+  input: (styles) => ({
+    ...styles,
+    padding: 0,
+    color: colors.greyMedium,
+    fontFamily: FONT_FAMILIES.display,
+    fontWeight: FONT_WEIGHTS.medium,
+    fontStyle: 'normal',
+    height: '100%',
+    lineHeight: '100%',
+    marginTop: 0,
+    marginBottom: 0,
+    '@media (max-width: 767px)': {
+      fontSize: '1rem',
+    },
+  }),
+  menuList: (styles) => ({
+    ...styles,
+    textAlign: 'left',
+    color: colors.grey,
+  }),
+  placeholder: (styles) => ({
+    ...styles,
+    padding: 0,
+    color: colors.greyMediumOpacity('0.6'),
+    fontFamily: FONT_FAMILIES.display,
+    fontWeight: FONT_WEIGHTS.medium,
+    '> svg': {
+      color: colors.primary,
+      paddingTop: '0.2rem',
+      marginRight: '0.5rem',
+    },
+    '@media (max-width: 767px)': {
+      fontSize: '1rem',
+      lineHeight: 1.3,
+    },
+  }),
+}

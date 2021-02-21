@@ -12,6 +12,13 @@ export const ENDPOINTS = {
   newPassword: `${API_BASE}rest-auth/password/reset/confirm/`,
 }
 
+const APIKEY = 'zcvxJsWzSufs6KeNMbpauritS1UTGh2h'
+export const FIN_API = 'https://apidojo-yahoo-finance-v1.p.rapidapi.com/'
+export const FIN_ENPOINTS = {
+  autoComplete: `${FIN_API}auto-complete/`,
+  getSummary: `${FIN_API}stock/v2/get-summary/`
+}
+
 export const checkStatus = (response) => {
   if (!response.ok && response.statusText) {
     const error = new Error(response.statusText)
@@ -42,13 +49,37 @@ export const parseJSON = (response) => {
   })
 }
 
+export const urlBuilder = (url, options) => {
+  if (!options) {
+    return url
+  }
+  Object.keys(options).map(key => {
+    if (
+      options[key] === null ||
+      options[key] === '' ||
+      options[key] === undefined
+    ) {
+      delete options[key]
+    }
+
+    return null
+  })
+  let esc = encodeURIComponent
+  let query = Object.keys(options)
+    .map(k => esc(k) + '=' + esc(options[k].toString().replace('%26', '&'))) // replace the encoded character to prevent encode twice
+    .join('&')
+  url += '?' + query
+  return url
+}
+
 // base api call
 export const apiCall = async (
   url,
   data,
   method = 'get',
   hasFile = false,
-  token = null
+  token = null,
+  rapidApiKey = null
 ) => {
   console.log('-------api called-----', url)
   let fetchOptions = {
@@ -70,6 +101,11 @@ export const apiCall = async (
 
   if (token) {
     fetchOptions.headers['Authorization'] = `JWT ${token}`
+  }
+
+  if(rapidApiKey) {
+    fetchOptions.headers['x-rapidapi-key'] = rapidApiKey
+    fetchOptions.headers['x-rapidapi-host'] = 'apidojo-yahoo-finance-v1.p.rapidapi.com'
   }
 
   if (formattedData) {
@@ -113,4 +149,14 @@ export const logout = async () => {
 // logout
 export const signUp = async (data) => {
   return await apiCall(ENDPOINTS.logout, data, 'post')
+}
+
+// get equities auto-complete
+export const symbolNameAutoComplete = async (params) => {
+  return await apiCall(urlBuilder(FIN_ENPOINTS.autoComplete, {...params}), null, 'get', false, null, APIKEY)
+}
+
+// get equity summary
+export const getEquitySummary = async (params) => {
+  return await apiCall(urlBuilder(FIN_ENPOINTS.getSummary, {...params}), null, 'get', false, null, APIKEY)
 }
