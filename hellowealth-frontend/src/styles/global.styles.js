@@ -1,4 +1,4 @@
-import styled, { createGlobalStyle } from 'styled-components'
+import styled, { createGlobalStyle, css } from 'styled-components'
 import tw from 'tailwind.macro'
 
 export const GlobalStyle = createGlobalStyle`
@@ -12,11 +12,7 @@ export const GlobalStyle = createGlobalStyle`
 
   body {
     height: 100%;
-    ${tw`font-body`}
-  }
-
-  #root {
-    height: 100%;
+    ${tw`font-body bg-pink`}
   }
 `
 
@@ -93,6 +89,12 @@ export const Spinner = styled.div`
   }
 `
 
+export const WatchListButton = styled.button`
+  ${tw`bg-blue rounded p-2 text-white font-display`}
+  height: 45px;
+  width: 200px;
+`
+
 export const ErrorMsg = styled.div`
   ${tw`text-red font-display`}
 `
@@ -108,6 +110,18 @@ export const FormInput = styled.input`
   ::placeholder {
     ${tw`text-gray`}
   }
+`
+
+export const InfoTitle = styled.h3`
+  ${tw`text-lg font-display font-bold p-2 mt-2`}
+`
+
+export const InfoBox = styled.div`
+  ${tw`bg-white rounded-lg p-4`}
+`
+
+export const Spacer = styled.div`
+  ${props => props.height && css`height: ${props.height}`}
 `
 
 export const ReactSelectStyles = {
