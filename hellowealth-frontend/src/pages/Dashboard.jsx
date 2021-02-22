@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Chart } from 'react-google-charts'
 import AsyncSelect from 'react-select/async'
 import LoadingSpinner from '../components/LoadingSpinner'
+import EquityDetailsRow from '../components/EquityDetailsRow'
 import {
   ReactSelectStyles,
   UserMenu,
@@ -14,10 +15,10 @@ import {
 import { symbolNameAutoComplete, getEquitySummary } from '../services/api'
 import { isNullOrEmpty, buildEquitiesOptions } from '../services/helper'
 
-export const DashboardPage = () => {
+export const DashboardPage = ({ equity }) => {
   const [loading, setLoading] = useState(false)
-  const [selectedEquity, setSelectedEquity] = useState(null)
-  const [equityDetails, setEquityDetails] = useState({})
+  const [selectedEquity, setSelectedEquity] = useState(equity)
+  const [equityDetails, setEquityDetails] = useState(equity)
   const [searchInput, setSearchInput] = useState({
     isSearched: false,
     error: false,
@@ -73,6 +74,8 @@ export const DashboardPage = () => {
         symbol: selectedEquity.value,
       })
 
+      //const response = {}
+
       if (!response.error && response.ok) {
         setEquityDetails({
           price: response.price,
@@ -98,56 +101,7 @@ export const DashboardPage = () => {
 
     setSelectedEquity(option)
   }
-  /*
-  ask: {raw: 760, fmt: "760.00"}
-  askSize: {raw: 800, fmt: "800", longFmt: "800"}
-  averageDailyVolume10Day: {raw: 21237340, fmt: "21.24M", longFmt: "21,237,340"}
-  averageVolume: {raw: 40965440, fmt: "40.97M", longFmt: "40,965,440"}
-  averageVolume10days: {raw: 21237340, fmt: "21.24M", longFmt: "21,237,340"}
-  beta: {raw: 2.090715, fmt: "2.09"}
-  bid: {raw: 759.55, fmt: "759.55"}
-  bidSize: {raw: 800, fmt: "800", longFmt: "800"}
-  circulatingSupply: {}
-  currency: "USD"
-  dayHigh: {raw: 796.7899, fmt: "796.79"}
-  dayLow: {raw: 777.39, fmt: "777.39"}
-  dividendRate: {}
-  dividendYield: {}
-  exDividendDate: {}
-  expireDate: {}
-  fiftyDayAverage: {raw: 828.02423, fmt: "828.02"}
-  fiftyTwoWeekHigh: {raw: 900.4, fmt: "900.40"}
-  fiftyTwoWeekLow: {raw: 70.102, fmt: "70.10"}
-  fiveYearAvgDividendYield: {}
-  forwardPE: {raw: 144.41774, fmt: "144.42"}
-  fromCurrency: null
-  lastMarket: null
-  marketCap: {raw: 749933953024, fmt: "749.93B", longFmt: "749,933,953,024"}
-  maxAge: 1
-  maxSupply: {}
-  navPrice: {}
-  open: {raw: 795, fmt: "795.00"}
-  openInterest: {}
-  payoutRatio: {raw: 0, fmt: "0.00%"}
-  previousClose: {raw: 787.38, fmt: "787.38"}
-  priceHint: {raw: 2, fmt: "2", longFmt: "2"}
-  priceToSalesTrailing12Months: {raw: 23.780249, fmt: "23.78"}
-  regularMarketDayHigh: {raw: 796.7899, fmt: "796.79"}
-  regularMarketDayLow: {raw: 777.39, fmt: "777.39"}
-  regularMarketOpen: {raw: 795, fmt: "795.00"}
-  regularMarketPreviousClose: {raw: 787.38, fmt: "787.38"}
-  regularMarketVolume: {raw: 18958255, fmt: "18.96M", longFmt: "18,958,255"}
-  startDate: {}
-  strikePrice: {}
-  toCurrency: null
-  totalAssets: {}
-  tradeable: false
-  trailingAnnualDividendRate: {}
-  trailingAnnualDividendYield: {}
-  trailingPE: {raw: 1220.7812, fmt: "1,220.78"}
-  twoHundredDayAverage: {raw: 554.72736, fmt: "554.73"}
-  volume: 
-*/
+
   return (
     <div className='w-full'>
       <UserMenu>
@@ -223,7 +177,45 @@ export const DashboardPage = () => {
                 />
               </InfoBox>
               <InfoTitle>Market Details</InfoTitle>
-              <InfoBox>Market box</InfoBox>
+              {equityDetails && equityDetails.summaryDetail ? (
+                <InfoBox className='flex flex-col flex-wrap lg:flex-row'>
+                  <EquityDetailsRow
+                    label='Asked price'
+                    value={equityDetails.summaryDetail.ask.raw}
+                  />
+                  <EquityDetailsRow
+                    label='Price'
+                    value={equityDetails.summaryDetail.bid.raw}
+                  />
+                  <EquityDetailsRow
+                    label='Avg. Volume'
+                    value={equityDetails.summaryDetail.averageVolume.raw}
+                    format='decimal'
+                  />
+                  <EquityDetailsRow
+                    label='Beta'
+                    value={equityDetails.summaryDetail.beta.raw}
+                    format='decimal'
+                  />
+                  <EquityDetailsRow
+                    label="Today's High"
+                    value={equityDetails.summaryDetail.dayHigh.raw}
+                    format='decimal'
+                  />
+                  <EquityDetailsRow
+                    label="Today's Low"
+                    value={equityDetails.summaryDetail.dayLow.raw}
+                    format='decimal'
+                  />
+                  <EquityDetailsRow
+                    label='Market Cap'
+                    value={equityDetails.summaryDetail.marketCap.raw}
+                  />
+                </InfoBox>
+              ) : (
+                <InfoBox>Missing data</InfoBox>
+              )}
+
               <InfoTitle>
                 About {selectedEquity && selectedEquity.data.longname}
               </InfoTitle>
@@ -296,6 +288,16 @@ export const DashboardPage = () => {
       <Spacer height='3rem' />
     </div>
   )
+}
+
+DashboardPage.defaultProps = {
+  equity: {
+    data: {
+      symbol: 'TSLA',
+      longname: 'Test Comp',
+    },
+    value: 'TSLA',
+  },
 }
 
 export default DashboardPage
