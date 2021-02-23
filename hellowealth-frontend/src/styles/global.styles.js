@@ -117,7 +117,7 @@ export const InfoTitle = styled.h3`
 `
 
 export const InfoBox = styled.div`
-  ${tw`bg-white rounded-lg p-4`}
+  ${tw`bg-white shadow-sm rounded-lg p-4`}
 `
 
 export const Spacer = styled.div`

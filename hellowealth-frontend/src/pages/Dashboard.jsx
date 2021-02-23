@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Chart } from 'react-google-charts'
 import AsyncSelect from 'react-select/async'
 import LoadingSpinner from '../components/LoadingSpinner'
-import EquityDetailsRow from '../components/EquityDetailsRow'
+import MarketDetailsBox from '../components/MarketDetailsBox'
 import {
   ReactSelectStyles,
   UserMenu,
@@ -18,7 +18,12 @@ import { isNullOrEmpty, buildEquitiesOptions } from '../services/helper'
 export const DashboardPage = ({ equity }) => {
   const [loading, setLoading] = useState(false)
   const [selectedEquity, setSelectedEquity] = useState(equity)
-  const [equityDetails, setEquityDetails] = useState(equity)
+  const [equityDetails, setEquityDetails] = useState({
+    price: null,
+    summaryDetail: null,
+    summaryProfile: null,
+  })
+
   const [searchInput, setSearchInput] = useState({
     isSearched: false,
     error: false,
@@ -66,8 +71,15 @@ export const DashboardPage = ({ equity }) => {
     callback(results)
   }
 
-  useEffect(() => {
-    const getEquityData = async () => {
+  const onInputChange = async (option) => {
+    setSearchInput({
+      ...searchInput,
+      error: false,
+    })
+
+    setSelectedEquity(option)
+
+    if (!isNullOrEmpty(selectedEquity)) {
       setLoading(true)
       const response = await getEquitySummary({
         region: 'US',
@@ -87,19 +99,6 @@ export const DashboardPage = ({ equity }) => {
       console.log(equityDetails)
       setLoading(false)
     }
-
-    if (!isNullOrEmpty(selectedEquity)) {
-      getEquityData()
-    }
-  }, [selectedEquity])
-
-  const onInputChange = async (option) => {
-    setSearchInput({
-      ...searchInput,
-      error: false,
-    })
-
-    setSelectedEquity(option)
   }
 
   return (
@@ -138,7 +137,7 @@ export const DashboardPage = ({ equity }) => {
           <LoadingSpinner isShow={loading} />
         ) : (
           <>
-            <div className='flex justify-between items-center'>
+            <div className='flex flex-col justify-between items-center lg:flex-row'>
               <h2>
                 <span className='px-1 text-lg'>
                   {selectedEquity.data.symbol}
@@ -150,6 +149,7 @@ export const DashboardPage = ({ equity }) => {
               <WatchListButton type='button'>Add to watch list</WatchListButton>
             </div>
             <div className='flex flex-col'>
+              {/* === Stock Performance === */}
               <InfoTitle>Performance</InfoTitle>
               <InfoBox>
                 <Chart
@@ -176,85 +176,25 @@ export const DashboardPage = ({ equity }) => {
                   rootProps={{ 'data-testid': '2' }}
                 />
               </InfoBox>
-              <InfoTitle>Market Details</InfoTitle>
-              {equityDetails && equityDetails.summaryDetail ? (
-                <InfoBox className='flex flex-col flex-wrap lg:flex-row'>
-                  <EquityDetailsRow
-                    label='Asked price'
-                    value={equityDetails.summaryDetail.ask.raw}
-                  />
-                  <EquityDetailsRow
-                    label='Price'
-                    value={equityDetails.summaryDetail.bid.raw}
-                  />
-                  <EquityDetailsRow
-                    label='Avg. Volume'
-                    value={equityDetails.summaryDetail.averageVolume.raw}
-                    format='decimal'
-                  />
-                  <EquityDetailsRow
-                    label='Beta'
-                    value={equityDetails.summaryDetail.beta.raw}
-                    format='decimal'
-                  />
-                  <EquityDetailsRow
-                    label="Today's High"
-                    value={equityDetails.summaryDetail.dayHigh.raw}
-                    format='decimal'
-                  />
-                  <EquityDetailsRow
-                    label="Today's Low"
-                    value={equityDetails.summaryDetail.dayLow.raw}
-                    format='decimal'
-                  />
-                  <EquityDetailsRow
-                    label='Market Cap'
-                    value={equityDetails.summaryDetail.marketCap.raw}
-                  />
-                </InfoBox>
-              ) : (
-                <InfoBox>Missing data</InfoBox>
-              )}
 
+              {/* === Market details === */}
+              <InfoTitle>Market Details</InfoTitle>
+              <MarketDetailsBox summaryDetail={equityDetails.summaryDetail} />
+
+              {/* === About company === */}
               <InfoTitle>
                 About {selectedEquity && selectedEquity.data.longname}
               </InfoTitle>
               <InfoBox>
-                {/* {!isNullOrEmpty(equityDetails) &&
-                  !isNullOrEmpty(equityDetails.summaryProfile) && (
-                    <p>{equityDetails.summaryProfile.longBusinessSummary}</p>
-                  )} */}
-                <p>
-                  Tesla, Inc. designs, develops, manufactures, leases, and sells
-                  electric vehicles, and energy generation and storage systems
-                  in the United States, China, and internationally. The company
-                  operates in two segments, Automotive, and Energy Generation
-                  and Storage. The Automotive segment offers electric vehicles,
-                  as well as sells automotive regulatory credits. It provides
-                  sedans and sport utility vehicles through direct and used
-                  vehicle sales, a network of Tesla Superchargers, and in-app
-                  upgrades; and purchase financing and leasing services. This
-                  segment is also involved in the provision of non-warranty
-                  after-sales vehicle services, sale of used vehicles, retail
-                  merchandise, and vehicle insurance, as well as sale of
-                  products through its subsidiaries to third party customers;
-                  services for electric vehicles through its company-owned
-                  service locations, and Tesla mobile service technicians; and
-                  vehicle limited warranties and extended service plans. The
-                  Energy Generation and Storage segment engages in the design,
-                  manufacture, installation, sale, and leasing of solar energy
-                  generation and energy storage products, and related services
-                  to residential, commercial, and industrial customers and
-                  utilities through its website, stores, and galleries, as well
-                  as through a network of channel partners. This segment also
-                  offers service and repairs to its energy product customers,
-                  including under warranty; and various financing options to its
-                  solar customers. The company was formerly known as Tesla
-                  Motors, Inc. and changed its name to Tesla, Inc. in February
-                  2017. Tesla, Inc. was founded in 2003 and is headquartered in
-                  Palo Alto, California.
-                </p>
+                {!isNullOrEmpty(equityDetails) &&
+                !isNullOrEmpty(equityDetails.summaryProfile) ? (
+                  <p>{equityDetails.summaryProfile.longBusinessSummary}</p>
+                ) : (
+                  <p>Getting information...</p>
+                )}
               </InfoBox>
+
+              {/* === Prediction trend === */}
               <InfoTitle>Prediction trend</InfoTitle>
               <InfoBox>
                 <Chart
