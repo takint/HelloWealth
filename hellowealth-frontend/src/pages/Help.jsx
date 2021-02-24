@@ -1,17 +1,14 @@
+import { Link } from 'react-router-dom'
 export const HelpPage = () => {
   return (
     <div className='flex flex-1 flex-col justify-center text-lg'>
-      <h2 className='m-4 p-4 uppercase text-4xl'>Welcome</h2>
-      <p className='p-4'>
-        "We simply attempt to be fearful when others are greedy and to be greedy
-        only when others are fearful." - Warren Buffett
-      </p>
-      <p className='p-4'>
-        Buffett advises investors not to think of their investments as "stocks,"
-        but to think of buying a stock as buying an entire business. "Never
-        invest in a business you cannot understand."
-      </p>
-      <p className='p-4'>"Risk comes from not knowing what you're doing"</p>
+      <Link to='/dashboard' className='self-start bg-gray-500 p-2 m-2 rounded'>
+        Back to dashboard
+      </Link>
+      <h1 className='text-center text-4xl font-bold font-display'>
+        Don't know which one to pick for your interested:
+      </h1>
+      <img alt='Stock List' src='static/stocklist.jpg' />
     </div>
   )
 }
