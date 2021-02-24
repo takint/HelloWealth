@@ -1,10 +1,20 @@
-import { Link } from 'react-router-dom'
-
 const SocialMenu = () => {
   const menuItems = [
-    { url: '#', label: 'static/fb.png', onMenuItemClick: () => {} },
-    { url: '#', label: 'static/inst.png', onMenuItemClick: () => {} },
-    { url: '#', label: 'static/twt.png', onMenuItemClick: () => {} },
+    {
+      url: 'https://facebook.com',
+      label: 'static/fb.png',
+      onMenuItemClick: () => {},
+    },
+    {
+      url: 'https://instagram.com',
+      label: 'static/inst.png',
+      onMenuItemClick: () => {},
+    },
+    {
+      url: 'https://twitter.com',
+      label: 'static/twt.png',
+      onMenuItemClick: () => {},
+    },
   ]
 
   return (
@@ -13,9 +23,14 @@ const SocialMenu = () => {
         {menuItems.map((item, idx) => {
           return (
             <li key={idx}>
-              <Link to={item.url} onClick={item.onMenuItemClick}>
+              <a
+                href={item.url}
+                target='_blank'
+                rel='noreferrer'
+                onClick={item.onMenuItemClick}
+              >
                 <img alt={item.label} width='48px' src={item.label} />
-              </Link>
+              </a>
             </li>
           )
         })}

@@ -1,14 +1,16 @@
-import { useContext, useState } from 'react'
+import { useContext, useState, useEffect } from 'react'
 import { Formik } from 'formik'
 import { Form } from 'reactstrap'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import { ErrorMsg, FormGroup, FormInput } from '../styles/global.styles'
 import { login } from '../services/api'
-import { dynamicValidation } from '../services/helper'
+import { dynamicValidation, isNullOrEmpty } from '../services/helper'
 import { UserContext } from '../services/context'
+import { setCookie, JWT_COOKIE } from '../services/cookies'
 
 export const LoginPage = ({ pageHeader, errorMessage }) => {
   const userContext = useContext(UserContext)
+  const history = useHistory()
   const [isFormSubmit, setFormSubmit] = useState()
   const [loginError, setLoginError] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -19,57 +21,50 @@ export const LoginPage = ({ pageHeader, errorMessage }) => {
     { name: 'password', required: true, label: 'Password' },
   ])
 
-  // const logoutHandle = async () => {
-  //   const response = await logout()
-  //   if (!response.error) {
-  //     //removeCookie(JWT_COOKIE_DASHBOARD)
-  //     userContext.setContext({
-  //       ...userContext,
-  //       ...initialUserContext,
-  //     })
-  //   }
-  // }
-
   const handleSubmit = async (values, setFieldError) => {
     setLoading(true)
     setLoginError(false)
 
     const response = await login(values.email, values.password)
-    if (response.user) {
-      //setCookie(JWT_COOKIE_DASHBOARD, response.access_token)
-      // TODO: Get user data: assetEquities, watchedEquities, accountBalance
+
+    if (response.ok && !isNullOrEmpty(response.user)) {
+      setCookie(JWT_COOKIE, response.access_token)
+
+      // TODO: Get user data: assetEquities, watchedEquities, accountBalance will do after midterm
 
       userContext.setContext({
         ...userContext,
         token: response.access_token,
         refresh_token: response.refresh_token,
+        isAuthorized: true,
         userProfile: {
-          userId: response.pk,
-          username: response.username,
-          email: response.email,
-          firstName: response.first_name,
-          lastName: response.last_name,
+          userId: response.user.pk,
+          username: response.user.username,
+          email: response.user.email,
+          firstName: response.user.first_name,
+          lastName: response.user.last_name,
         },
       })
+
       setLoading(false)
       setSuccess(true)
-      //Router.pushRoute('/portfolio')
+      history.push('/dashboard')
     } else {
       setLoginError(true)
       setLoading(false)
     }
   }
 
-  // useEffect(() => {
-  //   logoutHandle()
-  // }, [])
+  useEffect(() => {
+    return function cleanup() {}
+  })
 
   return (
     <div className='flex flex-1 flex-col justify-center items-center text-lg'>
       <h2 className='uppercase text-4xl my-4'>{pageHeader}</h2>
       <Formik
         validationSchema={schema}
-        initialValues={{}}
+        initialValues={{ email: '', password: '' }}
         onSubmit={(values, { setFieldError }) => {
           handleSubmit(values, setFieldError)
         }}

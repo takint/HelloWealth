@@ -1,49 +1,100 @@
-import { useState } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import { Formik } from 'formik'
 import { Form } from 'reactstrap'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import { ErrorMsg, FormGroup, FormInput } from '../styles/global.styles'
-import { signUp } from '../services/api'
-import { dynamicValidation } from '../services/helper'
+import { signUp, updateUser } from '../services/api'
+import { UserContext } from '../services/context'
+import { dynamicValidation, isNullOrEmpty } from '../services/helper'
+import { setCookie, JWT_COOKIE } from '../services/cookies'
+
+const initRegisterForm = {
+  first_name: '',
+  last_name: '',
+  username: '',
+  email: '',
+  password1: '',
+  password2: '',
+}
 
 export const RegisterPage = ({ pageHeader, errorMessage }) => {
-  const [isFormSubmit, setFormSubmit] = useState()
+  const userContext = useContext(UserContext)
+  const history = useHistory()
+  const [isFormSubmit, setFormSubmit] = useState(false)
   const [registerError, setRegisterError] = useState(false)
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
 
   const schema = dynamicValidation([
-    { name: 'firstName', type: 'text', label: 'First Name' },
-    { name: 'lastName', type: 'text', label: 'Last Name' },
+    { name: 'first_name', type: 'text', label: 'First Name' },
+    { name: 'last_name', type: 'text', label: 'Last Name' },
+    { name: 'username', type: 'text', label: 'Username' },
     { name: 'email', required: true, type: 'text', label: 'Email' },
-    { name: 'password', required: true, label: 'Password' },
-    { name: 'confirmPassword', required: true, label: 'Confirm Password' },
+    { name: 'password1', required: true, label: 'Password' },
+    {
+      name: 'password2',
+      matched: 'password1',
+      required: true,
+      label: 'Confirm Password',
+    },
   ])
 
   const handleSubmit = async (values, setFieldError) => {
     setLoading(true)
     setRegisterError(false)
 
+    values.username = values.email
     const response = await signUp(values)
 
-    if (response.user) {
-      // TODO: redirect to login
+    if (response.ok && !isNullOrEmpty(response.user)) {
+      setCookie(JWT_COOKIE, response.access_token)
+
+      const newUser = {
+        ...response.user,
+        first_name: values.first_name,
+        last_name: values.last_name,
+      }
+
+      // Update user info
+      await updateUser(response.access_token, {
+        pk: newUser.pk,
+        first_name: newUser.first_name,
+        last_name: newUser.last_name,
+      })
+
+      userContext.setContext({
+        ...userContext,
+        token: response.access_token,
+        refresh_token: response.refresh_token,
+        isAuthorized: true,
+        userProfile: {
+          userId: newUser.pk,
+          username: newUser.username,
+          email: newUser.email,
+          firstName: newUser.first_name,
+          lastName: newUser.last_name,
+        },
+      })
 
       setLoading(false)
       setSuccess(true)
-      //Router.pushRoute('/portfolio')
+      history.push('/dashboard')
     } else {
       setRegisterError(true)
       setLoading(false)
     }
   }
 
+  useEffect(() => {
+    return function cleanup() {}
+  })
+
   return (
     <div className='flex flex-1 flex-col justify-center items-center text-lg'>
       <h2 className='uppercase text-4xl my-4'>{pageHeader}</h2>
       <Formik
         validationSchema={schema}
-        initialValues={{}}
+        initialValues={initRegisterForm}
         onSubmit={(values, { setFieldError }) => {
           handleSubmit(values, setFieldError)
         }}
@@ -63,31 +114,31 @@ export const RegisterPage = ({ pageHeader, errorMessage }) => {
                 <label>First Name</label>
                 <FormInput
                   type='text'
-                  name='firstName'
+                  name='first_name'
                   id='firstName'
                   placeholder='John'
-                  value={values.email}
-                  invalid={isFormSubmit && errors['firstName']}
+                  value={values.first_name}
+                  invalid={isFormSubmit && errors['first_name']}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   touched={touched}
                 />
-                {isFormSubmit && <ErrorMsg>{errors['firstName']}</ErrorMsg>}
+                {isFormSubmit && <ErrorMsg>{errors['first_name']}</ErrorMsg>}
               </FormGroup>
               <FormGroup>
                 <label>Last Name</label>
                 <FormInput
                   type='text'
-                  name='lastName'
+                  name='last_name'
                   id='lastName'
                   placeholder='Wick'
-                  value={values.email}
-                  invalid={isFormSubmit && errors['lastName']}
+                  value={values.last_name}
+                  invalid={isFormSubmit && errors['last_name']}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   touched={touched}
                 />
-                {isFormSubmit && <ErrorMsg>{errors['lastName']}</ErrorMsg>}
+                {isFormSubmit && <ErrorMsg>{errors['last_name']}</ErrorMsg>}
               </FormGroup>
               <FormGroup>
                 <label>Your Email</label>
@@ -108,33 +159,31 @@ export const RegisterPage = ({ pageHeader, errorMessage }) => {
                 <label>Password</label>
                 <FormInput
                   type='password'
-                  name='password'
+                  name='password1'
                   id='password'
                   placeholder='Enter your password'
-                  value={values.password}
-                  invalid={isFormSubmit && errors['password']}
+                  value={values.password1}
+                  invalid={isFormSubmit && errors['password1']}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   touched={touched}
                 />
-                {isFormSubmit && <ErrorMsg>{errors['password']}</ErrorMsg>}
+                {isFormSubmit && <ErrorMsg>{errors['password1']}</ErrorMsg>}
               </FormGroup>
               <FormGroup>
                 <label>Confirm Password</label>
                 <FormInput
                   type='password'
-                  name='confirmPassword'
+                  name='password2'
                   id='confirmPassword'
                   placeholder='Re-enter your password'
-                  value={values.password}
-                  invalid={isFormSubmit && errors['confirmPassword']}
+                  value={values.password2}
+                  invalid={isFormSubmit && errors['password2']}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   touched={touched}
                 />
-                {isFormSubmit && (
-                  <ErrorMsg>{errors['confirmPassword']}</ErrorMsg>
-                )}
+                {isFormSubmit && <ErrorMsg>{errors['password2']}</ErrorMsg>}
               </FormGroup>
               <FormGroup>
                 <button

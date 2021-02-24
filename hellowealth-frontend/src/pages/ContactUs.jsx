@@ -15,4 +15,6 @@ export const ContactUsPage = () => {
   )
 }
 
+ContactUsPage.defaultProps = {}
+
 export default ContactUsPage

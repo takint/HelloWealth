@@ -1,6 +1,5 @@
-import { Component, useContext } from 'react'
+import { Component } from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
-import { UserContext } from './services/context'
 import ContactUsPage from './pages/ContactUs'
 import LoginPage from './pages/Login'
 import RegisterPage from './pages/Register'
@@ -8,20 +7,20 @@ import OurServicePage from './pages/OurService'
 import ForgotPasswordPage from './pages/ForgotPassword'
 import NewsPage from './pages/News'
 import LandingPage from './pages/LandingPage'
+import PortfolioPage from './pages/Portfolio'
 import DashboardPage from './pages/Dashboard'
+import HelpPage from './pages/Help'
 
-export const PrivateRoute = ({ component: Component, ...rest }) => {
-  const currentUser = useContext(UserContext)
-
+export const PrivateRoute = ({
+  component: Component,
+  isAuthorized,
+  ...rest
+}) => {
   return (
     <Route
       {...rest}
       render={(props) =>
-        !currentUser.isAuthorized ? (
-          <Component {...props} />
-        ) : (
-          <Redirect to='/login' />
-        )
+        isAuthorized ? <Component {...props} /> : <Redirect to='/login' />
       }
     />
   )
@@ -29,9 +28,20 @@ export const PrivateRoute = ({ component: Component, ...rest }) => {
 
 export class PrivateRoutes extends Component {
   render() {
+    const { isAuthorized } = this.props
     return (
       <Switch>
-        <PrivateRoute path='/dashboard' component={DashboardPage} />
+        <PrivateRoute
+          isAuthorized={isAuthorized}
+          path='/dashboard'
+          component={DashboardPage}
+        />
+        <PrivateRoute
+          isAuthorized={isAuthorized}
+          path='/portfolio'
+          component={PortfolioPage}
+        />
+        <Route path='/help' component={HelpPage} />
       </Switch>
     )
   }
@@ -47,8 +57,7 @@ export default class BasedRoutes extends Component {
         <Route path='/contact-us' component={ContactUsPage} />
         <Route path='/forgot-password' component={ForgotPasswordPage} />
         <Route path='/news' component={NewsPage} />
-        <Route path='/' component={LandingPage} />
-        {/* Private router go here */}
+        <Route path='/' component={LandingPage} exact={true} />
       </Switch>
     )
   }

@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, useContext } from 'react'
+import { Link, useHistory } from 'react-router-dom'
 import { Chart } from 'react-google-charts'
 import AsyncSelect from 'react-select/async'
 import LoadingSpinner from '../components/LoadingSpinner'
@@ -12,10 +12,18 @@ import {
   Spacer,
   WatchListButton,
 } from '../styles/global.styles'
-import { symbolNameAutoComplete, getEquitySummary } from '../services/api'
+import {
+  logout,
+  symbolNameAutoComplete,
+  getEquitySummary,
+} from '../services/api'
+import { UserContext, initialUserContext } from '../services/context'
 import { isNullOrEmpty, buildEquitiesOptions } from '../services/helper'
+import { removeCookie, JWT_COOKIE } from '../services/cookies'
 
 export const DashboardPage = ({ equity }) => {
+  const userContext = useContext(UserContext)
+  const history = useHistory()
   const [loading, setLoading] = useState(false)
   const [selectedEquity, setSelectedEquity] = useState(equity)
   const [equityDetails, setEquityDetails] = useState({
@@ -101,6 +109,19 @@ export const DashboardPage = ({ equity }) => {
     }
   }
 
+  const onLogOutClick = async () => {
+    const response = await logout()
+    if (!response.error) {
+      removeCookie(JWT_COOKIE)
+      userContext.setContext({
+        ...userContext,
+        ...initialUserContext,
+      })
+
+      history.push('/')
+    }
+  }
+
   return (
     <div className='w-full'>
       <UserMenu>
@@ -129,7 +150,9 @@ export const DashboardPage = ({ equity }) => {
           onChange={onInputChange}
           placeholder='Search for symbol or name'
         />
-        <Link to='/logout'>Log Out</Link>
+        <button type='button' onClick={onLogOutClick}>
+          Log Out
+        </button>
         <Link to='/help'>Help</Link>
       </UserMenu>
       <div className='w-full p-6'>

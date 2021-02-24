@@ -21,4 +21,6 @@ export const OurServicePage = () => {
   )
 }
 
+OurServicePage.defaultProps = {}
+
 export default OurServicePage

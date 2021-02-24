@@ -14,6 +14,10 @@ export const GlobalStyle = createGlobalStyle`
     height: 100%;
     ${tw`font-body bg-pink`}
   }
+
+  #root {
+    ${props => !props.isAuthPage && css`height: 100%;`}
+  }
 `
 
 export const colors = {

@@ -1,4 +1,4 @@
-export const LandingPage = () => {
+export const HelpPage = () => {
   return (
     <div className='flex flex-1 flex-col justify-center text-lg'>
       <h2 className='m-4 p-4 uppercase text-4xl'>Welcome</h2>
@@ -16,6 +16,6 @@ export const LandingPage = () => {
   )
 }
 
-LandingPage.defaultProps = {}
+HelpPage.defaultProps = {}
 
-export default LandingPage
+export default HelpPage

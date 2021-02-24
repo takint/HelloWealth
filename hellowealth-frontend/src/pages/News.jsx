@@ -13,4 +13,6 @@ export const NewsPage = () => {
   )
 }
 
+NewsPage.defaultProps = {}
+
 export default NewsPage

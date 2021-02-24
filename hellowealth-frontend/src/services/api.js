@@ -1,7 +1,7 @@
 import 'isomorphic-unfetch'
 import { objectToFormData } from 'object-to-formdata'
 
-export const API_BASE = 'http://localhost:8000/api/'
+export const API_BASE = 'http://localhost:59145/api/'
 export const ENDPOINTS = {
   login: `${API_BASE}rest-auth/login/`,
   logout: `${API_BASE}rest-auth/logout/`,
@@ -10,13 +10,15 @@ export const ENDPOINTS = {
   changePassword: `${API_BASE}rest-auth/password/change/`,
   resetPassword: `${API_BASE}rest-auth/password/reset/`,
   newPassword: `${API_BASE}rest-auth/password/reset/confirm/`,
+  verifyToken: `${API_BASE}rest-auth/token/verify/`,
+  refreshToken: `${API_BASE}rest-auth/token/refresh/`,
 }
 
 const APIKEY = 'zcvxJsWzSufs6KeNMbpauritS1UTGh2h'
 export const FIN_API = 'https://apidojo-yahoo-finance-v1.p.rapidapi.com/'
 export const FIN_ENPOINTS = {
   autoComplete: `${FIN_API}auto-complete/`,
-  getSummary: `${FIN_API}stock/v2/get-summary/`
+  getSummary: `${FIN_API}stock/v2/get-summary/`,
 }
 
 export const checkStatus = (response) => {
@@ -53,7 +55,7 @@ export const urlBuilder = (url, options) => {
   if (!options) {
     return url
   }
-  Object.keys(options).map(key => {
+  Object.keys(options).map((key) => {
     if (
       options[key] === null ||
       options[key] === '' ||
@@ -66,7 +68,7 @@ export const urlBuilder = (url, options) => {
   })
   let esc = encodeURIComponent
   let query = Object.keys(options)
-    .map(k => esc(k) + '=' + esc(options[k].toString().replace('%26', '&'))) // replace the encoded character to prevent encode twice
+    .map((k) => esc(k) + '=' + esc(options[k].toString().replace('%26', '&'))) // replace the encoded character to prevent encode twice
     .join('&')
   url += '?' + query
   return url
@@ -100,12 +102,13 @@ export const apiCall = async (
   }
 
   if (token) {
-    fetchOptions.headers['Authorization'] = `JWT ${token}`
+    fetchOptions.headers['Authorization'] = `Bearer ${token}`
   }
 
-  if(rapidApiKey) {
+  if (rapidApiKey) {
     fetchOptions.headers['x-rapidapi-key'] = rapidApiKey
-    fetchOptions.headers['x-rapidapi-host'] = 'apidojo-yahoo-finance-v1.p.rapidapi.com'
+    fetchOptions.headers['x-rapidapi-host'] =
+      'apidojo-yahoo-finance-v1.p.rapidapi.com'
   }
 
   if (formattedData) {
@@ -135,9 +138,28 @@ export const apiCall = async (
 export const login = async (email, password) => {
   return await apiCall(
     ENDPOINTS.login,
-    { email: email, password: password },
+    { username: email, password: password },
     'post'
   )
+}
+
+// verify token
+export const checkAccess = async (storedToken) => {
+  return await apiCall(ENDPOINTS.verifyToken, { token: storedToken }, 'post')
+}
+
+// refresh token
+export const refreshAccess = async (refreshToken) => {
+  return await apiCall(
+    ENDPOINTS.refreshToken,
+    { refresh: refreshToken },
+    'post'
+  )
+}
+
+// user data
+export const getUser = async (token) => {
+  return await apiCall(ENDPOINTS.user, null, 'get', false, token)
 }
 
 // logout
@@ -145,18 +167,38 @@ export const logout = async () => {
   return await apiCall(ENDPOINTS.logout, {}, 'post')
 }
 
-
 // logout
 export const signUp = async (data) => {
-  return await apiCall(ENDPOINTS.logout, data, 'post')
+  return await apiCall(ENDPOINTS.signUp, data, 'post')
 }
+
+// update user data
+export const updateUser = async (token, userData) => {
+  return await apiCall(ENDPOINTS.user, userData , 'patch', false, token)
+}
+
+/* ================================ Financial APIs ============================= */
 
 // get equities auto-complete
 export const symbolNameAutoComplete = async (params) => {
-  return await apiCall(urlBuilder(FIN_ENPOINTS.autoComplete, {...params}), null, 'get', false, null, APIKEY)
+  return await apiCall(
+    urlBuilder(FIN_ENPOINTS.autoComplete, { ...params }),
+    null,
+    'get',
+    false,
+    null,
+    APIKEY
+  )
 }
 
 // get equity summary
 export const getEquitySummary = async (params) => {
-  return await apiCall(urlBuilder(FIN_ENPOINTS.getSummary, {...params}), null, 'get', false, null, APIKEY)
+  return await apiCall(
+    urlBuilder(FIN_ENPOINTS.getSummary, { ...params }),
+    null,
+    'get',
+    false,
+    null,
+    APIKEY
+  )
 }

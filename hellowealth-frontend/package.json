@@ -10,6 +10,7 @@
     "babel-plugin-macros": "^3.0.1",
     "formik": "^2.2.6",
     "isomorphic-unfetch": "^3.1.0",
+    "js-cookie": "^2.2.1",
     "moment": "^2.29.1",
     "object-to-formdata": "^4.1.0",
     "postcss": "^8.2.4",
