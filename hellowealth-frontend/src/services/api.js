@@ -1,7 +1,8 @@
 import 'isomorphic-unfetch'
 import { objectToFormData } from 'object-to-formdata'
 
-export const API_BASE = 'http://localhost:59145/api/'
+// server: http://ec2-3-214-215-160.compute-1.amazonaws.com/
+export const API_BASE = 'http://ec2-3-214-215-160.compute-1.amazonaws.com/api/'
 export const ENDPOINTS = {
   login: `${API_BASE}rest-auth/login/`,
   logout: `${API_BASE}rest-auth/logout/`,
