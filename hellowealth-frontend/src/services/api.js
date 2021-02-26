@@ -15,11 +15,12 @@ export const ENDPOINTS = {
   refreshToken: `${API_BASE}rest-auth/token/refresh/`,
 }
 
-const APIKEY = 'zcvxJsWzSufs6KeNMbpauritS1UTGh2h'
+const APIKEY = '24e6fb3517msh440342105a0dcf5p10d467jsn8387aa179d81'//'zcvxJsWzSufs6KeNMbpauritS1UTGh2h'
 export const FIN_API = 'https://apidojo-yahoo-finance-v1.p.rapidapi.com/'
 export const FIN_ENPOINTS = {
   autoComplete: `${FIN_API}auto-complete/`,
   getSummary: `${FIN_API}stock/v2/get-summary/`,
+  getPriceHistory: `${FIN_API}stock/v3/get-historical-data/`,
 }
 
 export const checkStatus = (response) => {
@@ -203,3 +204,19 @@ export const getEquitySummary = async (params) => {
     APIKEY
   )
 }
+
+// get equity price history since last year
+export const getEquityPriceHistory = async (params) => {
+  return await apiCall(
+    urlBuilder(FIN_ENPOINTS.getPriceHistory, { ...params }),
+    null,
+    'get',
+    false,
+    null,
+    APIKEY
+  )
+}
+
+// get candle stick chart dataset
+//https://apidojo-yahoo-finance-v1.p.rapidapi.com/stock/v2/get-chart?interval=5m&symbol=AMRN&range=1d&region=US
+// get recommend: https://apidojo-yahoo-finance-v1.p.rapidapi.com/stock/v2/get-recommendations?symbol=INTC

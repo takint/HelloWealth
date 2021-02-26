@@ -21,6 +21,7 @@ module.exports = {
         },
         pink: '#f9f8f7',
         red: '#b91c1c',
+        green: '#538135',
         blue: '#030730',
         blue__medium:'#000C66',
         blue__light:'#7EC8E3',

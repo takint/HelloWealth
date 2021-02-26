@@ -13,18 +13,55 @@ export const MarketDetailsBox = ({ summaryDetail }) => {
         format='decimal'
       />
       <EquityDetailsRow
+        label='Volume'
+        format='decimal'
+        value={summaryDetail.volume.raw}
+      />
+      <EquityDetailsRow
+        label='P/E ratio'
+        format='decimal'
+        value={summaryDetail.trailingPE.raw}
+      />
+      <EquityDetailsRow
         label='Beta'
         value={summaryDetail.beta.raw}
         format='decimal'
       />
       <EquityDetailsRow
         label="Today's High"
+        color='text-green font-bold'
         value={summaryDetail.dayHigh.raw}
       />
-      <EquityDetailsRow label="Today's Low" value={summaryDetail.dayLow.raw} />
+      <EquityDetailsRow
+        label="Today's Low"
+        color='text-red font-bold'
+        value={summaryDetail.dayLow.raw}
+      />
+
+      <EquityDetailsRow
+        label="52-weeks's High"
+        color='text-green font-bold'
+        value={summaryDetail.fiftyTwoWeekHigh.raw}
+      />
+      <EquityDetailsRow
+        label="52-weeks's Low"
+        color='text-red font-bold'
+        value={summaryDetail.fiftyTwoWeekLow.raw}
+      />
+
+      <EquityDetailsRow
+        label='Yesterday close at'
+        value={summaryDetail.previousClose.raw}
+      />
+      <EquityDetailsRow
+        label='Avg. 200-days'
+        value={summaryDetail.twoHundredDayAverage.raw}
+      />
+
       <EquityDetailsRow
         label='Market Cap'
         value={summaryDetail.marketCap.raw}
+        shortFormat={summaryDetail.marketCap.fmt}
       />
     </InfoBox>
   ) : (

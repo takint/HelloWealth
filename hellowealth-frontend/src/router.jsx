@@ -57,6 +57,9 @@ export default class BasedRoutes extends Component {
         <Route path='/contact-us' component={ContactUsPage} />
         <Route path='/forgot-password' component={ForgotPasswordPage} />
         <Route path='/news' component={NewsPage} />
+        <Route path='/dashboard'>
+          <Redirect to='/login' />
+        </Route>
         <Route path='/' component={LandingPage} exact={true} />
       </Switch>
     )

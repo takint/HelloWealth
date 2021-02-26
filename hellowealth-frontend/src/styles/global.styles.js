@@ -41,6 +41,11 @@ export const FONT_WEIGHTS = {
   bold: 700,
 }
 
+export const chartDisplayText = {
+  fontName: 'Noto Sans',
+  color: '#000C66',
+}
+
 export const HomeMenu = styled.ul`
   ${tw`flex justify-end font-display flex-col text-2xl lg:flex-row`}
 

@@ -44,7 +44,12 @@ class App extends Component {
         getUser(token),
       ])
 
-      if (authResponse.ok && authResponse.statusCode === 200) {
+      if (
+        authResponse.ok &&
+        authResponse.statusCode === 200 &&
+        !userResponse.error &&
+        userResponse.ok
+      ) {
         currentUser.isAuthorized = true
         currentUser.token = token
         currentUser = {

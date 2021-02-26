@@ -1,4 +1,5 @@
 import * as Yup from 'yup'
+import moment from 'moment'
 
 export const EMAIL_REGEX = /^(()|(\s?[^\s,]+@[^\s,]+\.[^\s,]+\s?,)*(\s?[^\s,]+@[^\s,]+\.[^\s,]+))$/
 export const PHONE_REGEX = /^\+?([0-9]{2})\)?([0-9]{8,25})$/
@@ -237,4 +238,39 @@ export const buildEquitiesOptions = (data, key) => {
     })
     return obj
   }
+}
+
+
+// Map dataframe from APIs to chart data frame
+export const buildEquityPriceDataframe = (dataset, timeRange = 6) => {
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'decimal',
+  })
+
+  let currentDate = moment().subtract(timeRange, 'months').unix()
+  const rangeData = dataset.filter(
+    (data) => data.date >= currentDate
+  )
+
+  const priceDf = rangeData.map((data) => {
+    let dataDate = moment.unix(data.date).format('D MMM YYYY')
+    return[
+      dataDate,
+      data.low,
+      data.open,
+      data.close,
+      data.high,
+      `On date: ${dataDate} \n Open-Close:[${formatter.format(
+        data.open
+      )}, ${formatter.format(
+        data.close
+      )}] \n Highest-Lowest:[${formatter.format(
+        data.high
+      )}, ${formatter.format(
+        data.low
+      )}] \n Total volume: ${formatter.format(data.volume)}`,
+    ]
+  })
+
+  return priceDf
 }
