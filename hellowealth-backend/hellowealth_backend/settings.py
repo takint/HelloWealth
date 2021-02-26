@@ -137,7 +137,6 @@ REST_FRAMEWORK = {
     'MAX_PAGE_SIZE': 2021,
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
         'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
     ),
     'URL_FORMAT_OVERRIDE': None,
