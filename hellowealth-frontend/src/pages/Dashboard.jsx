@@ -52,7 +52,7 @@ export const DashboardPage = ({ equity }) => {
 
         setEquityDetails({
           symbol: selectedEquity.data.symbol,
-          longname: selectedEquity.data.symbol,
+          longname: selectedEquity.data.longname,
           price: summaryResp.price,
           summaryDetail: summaryResp.summaryDetail,
           summaryProfile: summaryResp.summaryProfile,
