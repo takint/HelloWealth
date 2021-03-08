@@ -9,14 +9,14 @@ export const initialUserContext = {
     userId: 0,
     username: '',
     email: '',
-    firstName: '',
+    firstName: 'User',
     lastName: '',
   },
   alerts: [],
-  isAuthorized: false,
+  isAuthorized: true,
   assetEquities: [],
   watchedEquities: [],
-  accountBalance: 0,
+  accountBalance: 6000.00,
   setContext: () => {}, // - context updater function
 }
 

@@ -3,6 +3,7 @@ import moment from 'moment'
 
 export const EMAIL_REGEX = /^(()|(\s?[^\s,]+@[^\s,]+\.[^\s,]+\s?,)*(\s?[^\s,]+@[^\s,]+\.[^\s,]+))$/
 export const PHONE_REGEX = /^\+?([0-9]{2})\)?([0-9]{8,25})$/
+export const CURRENCY_SYMBOL = '$'
 
 export function dynamicValidation(form) {
   if (!form || !form.length) return false
@@ -273,4 +274,27 @@ export const buildEquityPriceDataframe = (dataset, timeRange = 6) => {
   })
 
   return priceDf
+}
+
+/*
+  ----------------------------------------------------------------------------------------------------
+  currencyFormat()
+  ----------------------------------------------------------------------------------------------------
+  Format numbers as currency
+*/
+export const currencyFormat = (val, kFormat = false) => {
+  if (kFormat) {
+    if (val > 999999) {
+      return `${CURRENCY_SYMBOL}${Math.sign(val) *
+        (Math.abs(val) / 1000000).toFixed(1) +
+        'M'}`
+    } else {
+      return `${CURRENCY_SYMBOL}${
+        Math.abs(val) > 999
+          ? Math.sign(val) * (Math.abs(val) / 1000).toFixed(1) + 'k'
+          : Math.sign(val) * Math.abs(val)
+      }`
+    }
+  }
+  return `${CURRENCY_SYMBOL}${new Intl.NumberFormat('en-CA').format(val)}`
 }
