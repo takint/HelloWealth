@@ -9,12 +9,8 @@ import {
   InfoTitle,
   InfoBox,
   InfoRow,
-  StockWrapper,
-  StockSymbolWrapper,
-  PriceWrapper,
   PriceBadge,
   Button,
-  TradeButton,
   FormInput,
   Spacer,
 } from '../styles/global.styles'
