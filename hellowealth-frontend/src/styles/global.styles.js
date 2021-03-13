@@ -16,7 +16,11 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   #root {
-    ${props => !props.isAuthPage && css`height: 100%;`}
+    ${(props) =>
+      !props.isAuthPage &&
+      css`
+        height: 100%;
+      `}
   }
 `
 
@@ -98,10 +102,20 @@ export const Spinner = styled.div`
   }
 `
 
-export const WatchListButton = styled.button`
-  ${tw`bg-blue rounded p-2 text-white font-display`}
+export const Button = styled.button`
+  ${tw`bg-blue__medium rounded p-2 text-white font-display`}
+`
+
+export const WatchListButton = styled(Button)`
   height: 45px;
   width: 200px;
+`
+
+export const TradeButton = styled(Button)`
+  ${tw`bg-green my-1 w-full`}
+  @media (min-width: 1024px) {
+    width: 70px;
+  }
 `
 
 export const ErrorMsg = styled.div`
@@ -129,8 +143,69 @@ export const InfoBox = styled.div`
   ${tw`bg-white shadow-sm rounded-lg p-4`}
 `
 
+export const InfoRow = styled.div`
+  ${tw`flex flex-row justify-between py-2`}
+
+  border-bottom: 1px dashed #9e9e9e;
+
+  & > *:first-child,
+  & > *:nth-child(2) {
+    ${tw`hidden lg:block`}
+  }
+
+  & > * {
+    flex: 0 0 50%;
+    @media (min-width: 1024px) {
+      flex: 0 0 20%;
+    }
+  }
+
+  & > *:last-child,
+  & > *:nth-last-child(2) {
+    text-align: right;
+    ${tw`text-right`}
+  }
+`
+
+export const StockWrapper = styled.div`
+  ${tw`flex flex-col border-b-2 lg:flex-row justify-between`}
+`
+
+export const StockSymbolWrapper = styled.div`
+  ${tw`m-1 p-2 flex flex-col`}
+`
+
+export const PriceWrapper = styled.div`
+  ${tw`flex flex-col lg:flex-row justify-start lg:items-center p-1`}
+  align-items: self-start;
+`
+
+export const PriceBadge = styled.strong`
+  ${tw`bg-green rounded-xl m-1 text-white text-center`}
+  padding: 0.125rem 0.5rem;
+  ${(props) => props.isDown && tw`bg-red`}
+  
+  &::after {
+    ${(props) =>
+      props.isDown
+        ? css`
+            content: '\u21D3';
+          `
+        : css`
+            content: '\u21D1';
+          `}
+    margin: 0 0.25rem;
+    font-size: 1.125rem;
+    ${(props) => props.noArrow && tw`hidden`}
+  }
+`
+
 export const Spacer = styled.div`
-  ${props => props.height && css`height: ${props.height}`}
+  ${(props) =>
+    props.height &&
+    css`
+      height: ${props.height};
+    `}
 `
 
 export const ReactSelectStyles = {
