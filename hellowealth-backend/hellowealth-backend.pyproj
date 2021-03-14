@@ -34,6 +34,9 @@
   <ItemGroup>
     <Compile Include="hellowealth_backend\api\admin.py" />
     <Compile Include="hellowealth_backend\api\apps.py" />
+    <Compile Include="hellowealth_backend\api\enums.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="hellowealth_backend\api\migrations\__init__.py" />
     <Compile Include="hellowealth_backend\api\models.py" />
     <Compile Include="hellowealth_backend\api\serializers.py">
