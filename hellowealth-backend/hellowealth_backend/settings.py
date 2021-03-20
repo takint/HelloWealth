@@ -49,7 +49,8 @@ INSTALLED_APPS = [
     'dj_rest_auth',
     'dj_rest_auth.registration',
     'hellowealth_backend',
-    'hellowealth_backend.api'
+    'hellowealth_backend.api',
+    'drf_yasg',
 ]
 
 # Middleware framework
