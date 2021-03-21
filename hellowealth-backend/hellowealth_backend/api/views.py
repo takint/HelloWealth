@@ -2,10 +2,12 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.contrib.auth.models import User, Group
+from django.core import serializers
 from hellowealth_backend.api.models import UserPorfolio, TradeTransaction
-from rest_framework import viewsets, status, permissions
+from rest_framework import viewsets, status, permissions, mixins
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from drf_yasg.utils import swagger_auto_schema
 from hellowealth_backend.api.serializers import (
     UserSerializer, 
     GroupSerializer, 
@@ -42,7 +44,7 @@ class UserPorfolioApiView(APIView):
         porfolio = self.get_porfolio(request.user.id)
 
         if not porfolio:
-            return Response({"res": "Object with todo id does not exists"},
+            return Response({"res": "Object with porfolio id does not exists"},
                 status=status.HTTP_400_BAD_REQUEST)
 
         serializer = UserPorfolioSerializer(porfolio)
@@ -54,30 +56,40 @@ class UserPorfolioApiView(APIView):
         except UserPorfolio.DoesNotExist:
             return None
 
+    # 2.  Update
+    @swagger_auto_schema(request_body=UserPorfolioSerializer)
+    def put(self, request, *args, **kwargs):
+        porfolio = self.get_porfolio(request.user.id)
+        if not porfolio:
+            return Response({"res": "Object with porfolio id does not exists"}, 
+                status=status.HTTP_400_BAD_REQUEST)
 
-    # 4. Update
-    #def put(self, request, todo_id, *args, **kwargs):
-    #    '''
-    #    Updates the todo item with given todo_id if exists
-    #    '''
-    #    todo_instance = self.get_object(todo_id, request.user.id)
-    #    if not todo_instance:
-    #        return Response(
-    #            {"res": "Object with todo id does not exists"}, 
-    #            status=status.HTTP_400_BAD_REQUEST
-    #        )
-    #    data = {
-    #        'task': request.data.get('task'), 
-    #        'completed': request.data.get('completed'), 
-    #        'user': request.user.id
-    #    }
-    #    serializer = TodoSerializer(instance = todo_instance, data=data, partial = True)
-    #    if serializer.is_valid():
-    #        serializer.save()
-    #        return Response(serializer.data, status=status.HTTP_200_OK)
-    #    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer = UserPorfolioSerializer(instance = porfolio, data=request.data, partial = True)
 
-    ## 5. Delete
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # 3.  Create
+    @swagger_auto_schema(request_body=UserPorfolioSerializer)
+    def post(self, request, *args, **kwargs):
+        porfolio = self.get_porfolio(request.user.id)
+
+        if porfolio:
+            return Response({"res": "Object with porfolio id is existed"}, 
+                status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = UserPorfolioSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # 4.  Delete
     #def delete(self, request, todo_id, *args, **kwargs):
     #    '''
     #    Deletes the todo item with given todo_id if exists
@@ -85,7 +97,7 @@ class UserPorfolioApiView(APIView):
     #    todo_instance = self.get_object(todo_id, request.user.id)
     #    if not todo_instance:
     #        return Response(
-    #            {"res": "Object with todo id does not exists"}, 
+    #            {"res": "Object with todo id does not exists"},
     #            status=status.HTTP_400_BAD_REQUEST
     #        )
     #    todo_instance.delete()
@@ -93,22 +105,6 @@ class UserPorfolioApiView(APIView):
     #        {"res": "Object deleted!"},
     #        status=status.HTTP_200_OK
     #    )
-    # 2.  Create
-    #def post(self, request, *args, **kwargs):
-    #    '''
-    #    Create the Todo with given todo data
-    #    '''
-    #    data = {
-    #        'task': request.data.get('task'),
-    #        'completed': request.data.get('completed'),
-    #        'user': request.user.id
-    #    }
-    #    serializer = TodoSerializer(data=data)
-    #    if serializer.is_valid():
-    #        serializer.save()
-    #        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    #    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class TradeTransactionApiView(APIView):
     # add permission to check if user is authenticated
@@ -121,3 +117,15 @@ class TradeTransactionApiView(APIView):
         trans = TradeTransaction.objects.filter(user = request.user.id)
         serializer = TradeTransactionSerializer(trans, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    # 2.  Create
+    @swagger_auto_schema(request_body=TradeTransactionSerializer)
+    def post(self, request, *args, **kwargs):
+
+        serializer = TradeTransactionSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

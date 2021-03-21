@@ -97,11 +97,11 @@ DATABASES = {
         'NAME': 'postgres',
         'USER': 'postgres',
         'PASSWORD': 'postgreshellowealth',
-        'HOST': 'hellowealth-db.ckxity1ytiaj.us-east-1.rds.amazonaws.com',
+        'HOST': 'hellowealth-db.ctiat5mvuqoy.us-east-1.rds.amazonaws.com', 
+         #old server: 'hellowealth-db.ckxity1ytiaj.us-east-1.rds.amazonaws.com',
         'PORT': '5432',
     }
 }
-#
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
