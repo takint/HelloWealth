@@ -13,9 +13,11 @@ export const ENDPOINTS = {
   newPassword: `${API_BASE}rest-auth/password/reset/confirm/`,
   verifyToken: `${API_BASE}rest-auth/token/verify/`,
   refreshToken: `${API_BASE}rest-auth/token/refresh/`,
+  userPorfolio: `${API_BASE}porfolio/`,
+  userTransaction: `${API_BASE}transaction/`,
 }
 
-const APIKEY = '24e6fb3517msh440342105a0dcf5p10d467jsn8387aa179d81'//'zcvxJsWzSufs6KeNMbpauritS1UTGh2h'
+const APIKEY = '24e6fb3517msh440342105a0dcf5p10d467jsn8387aa179d81' //'zcvxJsWzSufs6KeNMbpauritS1UTGh2h'
 export const FIN_API = 'https://apidojo-yahoo-finance-v1.p.rapidapi.com/'
 export const FIN_ENPOINTS = {
   autoComplete: `${FIN_API}auto-complete/`,
@@ -176,7 +178,38 @@ export const signUp = async (data) => {
 
 // update user data
 export const updateUser = async (token, userData) => {
-  return await apiCall(ENDPOINTS.user, userData , 'patch', false, token)
+  return await apiCall(ENDPOINTS.user, userData, 'patch', false, token)
+}
+
+// get user porfolio
+export const getUserPorfolio = async (token) => {
+  return await apiCall(ENDPOINTS.userPorfolio, null, 'get', false, token)
+}
+
+// create user porfolio
+export const createUserPorfolio = async (token, userData) => {
+  return await apiCall(ENDPOINTS.userPorfolio, userData, 'post', false, token)
+}
+
+// update user porfolio
+export const updateUserPorfolio = async (token, userData) => {
+  return await apiCall(ENDPOINTS.userPorfolio, userData, 'put', false, token)
+}
+
+// get user transaction
+export const getUserTrans = async (token) => {
+  return await apiCall(ENDPOINTS.userTransaction, null, 'get', false, token)
+}
+
+// create user transaction
+export const createUserTrans = async (token, userData) => {
+  return await apiCall(
+    ENDPOINTS.userTransaction,
+    userData,
+    'post',
+    false,
+    token
+  )
 }
 
 /* ================================ Financial APIs ============================= */

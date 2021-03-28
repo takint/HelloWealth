@@ -3,7 +3,7 @@ import { Formik } from 'formik'
 import { Form } from 'reactstrap'
 import { Link, useHistory } from 'react-router-dom'
 import { ErrorMsg, FormGroup, FormInput } from '../styles/global.styles'
-import { login } from '../services/api'
+import { login, getUserPorfolio } from '../services/api'
 import { dynamicValidation, isNullOrEmpty } from '../services/helper'
 import { UserContext } from '../services/context'
 import { setCookie, JWT_COOKIE } from '../services/cookies'
@@ -29,22 +29,27 @@ export const LoginPage = ({ pageHeader, errorMessage }) => {
 
     if (response.ok && !isNullOrEmpty(response.user)) {
       setCookie(JWT_COOKIE, response.access_token)
+      const porfolioRes = await getUserPorfolio(response.access_token)
 
-      // TODO: Get user data: assetEquities, watchedEquities, accountBalance will do after midterm
-
-      userContext.setContext({
-        ...userContext,
-        token: response.access_token,
-        refresh_token: response.refresh_token,
-        isAuthorized: true,
-        userProfile: {
-          userId: response.user.pk,
-          username: response.user.username,
-          email: response.user.email,
-          firstName: response.user.first_name,
-          lastName: response.user.last_name,
-        },
-      })
+      if (porfolioRes.ok) {
+        userContext.setContext({
+          ...userContext,
+          token: response.access_token,
+          refresh_token: response.refresh_token,
+          isAuthorized: true,
+          alerts: JSON.parse(porfolioRes.alerts),
+          accountBalance: parseFloat(porfolioRes.accountBalance),
+          assetEquities: JSON.parse(porfolioRes.assetEquities),
+          watchedEquities: JSON.parse(porfolioRes.watchedEquities),
+          userProfile: {
+            userId: response.user.pk,
+            username: response.user.username,
+            email: response.user.email,
+            firstName: response.user.first_name,
+            lastName: response.user.last_name,
+          },
+        })
+      }
 
       setLoading(false)
       setSuccess(true)

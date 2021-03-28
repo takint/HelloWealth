@@ -13,7 +13,7 @@ export const initialUserContext = {
     lastName: '',
   },
   alerts: [],
-  isAuthorized: true,
+  isAuthorized: false,
   assetEquities: [],
   watchedEquities: [],
   accountBalance: 6010.00,

@@ -1,9 +1,10 @@
-import { useContext, useState } from 'react'
+import { useContext, useState, useEffect } from 'react'
 import { Chart } from 'react-google-charts'
 import DashboardNavBar from '../components/DashboardNavBar'
 import EquityInfo from '../components/EquityInfo'
 import { UserContext } from '../services/context'
 import { currencyFormat } from '../services/helper'
+//import { getUserPorfolio, getUserTrans } from '../services/api'
 import { watchlist, assetList, transactionList } from '../services/constants'
 import {
   InfoTitle,
@@ -26,6 +27,19 @@ export const PortfolioPage = () => {
   const onBuyStock = (equity) => {}
   const onSellStock = (equity) => {}
   const onRemoveFromWatchlist = (equity) => {}
+
+  useEffect(() => {
+    // Get user data: assetEquities, watchedEquities, accountBalance
+    // Update user info
+
+    console.log(userContext)
+    //console.log(transRes)
+    //  await updateUser(response.access_token, {
+    //   pk: newUser.pk,
+    //   first_name: newUser.first_name,
+    //   last_name: newUser.last_name,
+    // })
+  })
 
   return (
     <div className='w-full'>
