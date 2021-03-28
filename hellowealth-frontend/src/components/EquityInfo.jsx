@@ -16,6 +16,8 @@ export const EquityInfo = ({
   onSellClick,
   isOnAssetList,
 }) => {
+  const numberFormat = new Intl.NumberFormat('en-CA')
+
   const onRemoveBtnClick = () => {
     onRemoveClick && onRemoveClick(equityData)
   }
@@ -66,24 +68,26 @@ export const EquityInfo = ({
         <div>
           <PriceWrapper>
             High:
-            <PriceBadge>{currencyFormat(equityData.highPrice)}</PriceBadge>
+            <PriceBadge noArrow>
+              {currencyFormat(equityData.highPrice)}
+            </PriceBadge>
             Low:
-            <PriceBadge isDown>
+            <PriceBadge noArrow isDown>
               {currencyFormat(equityData.lowPrice)}
             </PriceBadge>
           </PriceWrapper>
           <PriceWrapper>
             Open:{' '}
-            <PriceBadge>
-              {`${currencyFormat(equityData.openPrice)} (${
+            <PriceBadge isDown={equityData.changedPercentOpen <= 0}>
+              {`${currencyFormat(equityData.openPrice)} (${numberFormat.format(
                 equityData.changedPercentOpen
-              } %)`}
+              )} %)`}
             </PriceBadge>
             Close:{' '}
-            <PriceBadge isDown>
-              {`${currencyFormat(equityData.closePrice)} (${
+            <PriceBadge isDown={equityData.changedPercentClose <= 0}>
+              {`${currencyFormat(equityData.closePrice)} (${numberFormat.format(
                 equityData.changedPercentClose
-              } %)`}
+              )} %)`}
             </PriceBadge>
           </PriceWrapper>
         </div>
@@ -103,9 +107,13 @@ export const EquityInfo = ({
             colors: ['#7EC8E3'],
             vAxis: {
               minValue: equityData.minPrice,
+              format: 'currency',
+            },
+            hAxis: {
+              direction: -1,
             },
           }}
-          rootProps={{ 'data-testid': 'TSLA' }}
+          rootProps={{ 'data-testid': equityData.symbol }}
         />
       </div>
     </StockWrapper>

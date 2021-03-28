@@ -23,4 +23,4 @@ class UserPorfolioSerializer(serializers.ModelSerializer):
 class TradeTransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = TradeTransaction
-        fields = ['transDate', 'transContent', 'transType', 'amount', 'balance', 'user']
+        fields = ['id', 'transDate', 'transContent', 'transType', 'amount', 'balance', 'user']

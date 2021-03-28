@@ -122,6 +122,7 @@ export const assetList = [
   },
 ]
 
+/* Example transasction data */
 export const transactionList = [
   {
     id: 1,

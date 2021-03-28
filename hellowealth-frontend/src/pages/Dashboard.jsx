@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import { Chart } from 'react-google-charts'
 import LoadingSpinner from '../components/LoadingSpinner'
 import MarketDetailsBox from '../components/MarketDetailsBox'
@@ -12,8 +12,10 @@ import {
 } from '../styles/global.styles'
 import { getEquitySummary, getEquityPriceHistory } from '../services/api'
 import { isNullOrEmpty, buildEquityPriceDataframe } from '../services/helper'
+import { UserContext } from '../services/context'
 
 export const DashboardPage = ({ equity }) => {
+  const userContext = useContext(UserContext)
   const [loading, setLoading] = useState(false)
   const [equityDetails, setEquityDetails] = useState(null)
 
@@ -61,9 +63,52 @@ export const DashboardPage = ({ equity }) => {
         })
       }
 
-      console.log(equityDetails)
       setLoading(false)
     }
+  }
+
+  const addToWatchList = () => {
+    let watchListItem = {
+      symbol: equityDetails.symbol,
+      minPrice: 0,
+      buyPrice: 0,
+      todayPrice: 0,
+      changedPercent: 0,
+      highPrice: 0,
+      lowPrice: 0,
+      openPrice: 0,
+      changedPercentOpen: 0,
+      closePrice: 0,
+      changedPercentClose: 0,
+      weeklyPrices: [],
+    }
+
+    if (equityDetails.priceHistory) {
+      const monthPrice = equityDetails.priceHistory.slice(1, 21)
+      monthPrice.forEach((price) => {
+        let priceDay = [price[0], price[3]]
+        watchListItem.weeklyPrices.push(priceDay)
+      })
+    }
+
+    if (equityDetails.price) {
+      watchListItem.minPrice = equityDetails.price.regularMarketDayLow.raw
+      watchListItem.buyPrice = equityDetails.price.regularMarketPrice.raw
+      watchListItem.todayPrice = equityDetails.price.postMarketPrice.raw
+      watchListItem.changedPercent =
+        equityDetails.price.regularMarketChangePercent.raw
+      watchListItem.changedPercentOpen =
+        equityDetails.price.regularMarketChangePercent.raw
+      watchListItem.highPrice = equityDetails.price.regularMarketDayHigh.raw
+      watchListItem.lowPrice = equityDetails.price.regularMarketDayLow.raw
+      watchListItem.openPrice = equityDetails.price.regularMarketOpen.raw
+      watchListItem.closePrice = equityDetails.price.postMarketPrice.raw
+      watchListItem.changedPercentClose =
+        equityDetails.price.postMarketChangePercent.raw
+    }
+
+    userContext.watchedEquities.push(watchListItem)
+    userContext.setContext(userContext)
   }
 
   return (
@@ -86,7 +131,9 @@ export const DashboardPage = ({ equity }) => {
                   {equityDetails.longname}
                 </strong>
               </h2>
-              <WatchListButton type='button'>Add to watch list</WatchListButton>
+              <WatchListButton onClick={addToWatchList} type='button'>
+                Add to watch list
+              </WatchListButton>
             </div>
             <div className='flex flex-col'>
               {/* === Stock Performance === */}

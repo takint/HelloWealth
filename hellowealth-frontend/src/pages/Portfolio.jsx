@@ -1,11 +1,12 @@
 import { useContext, useState, useEffect } from 'react'
 import { Chart } from 'react-google-charts'
+import moment from 'moment'
 import DashboardNavBar from '../components/DashboardNavBar'
 import EquityInfo from '../components/EquityInfo'
 import { UserContext } from '../services/context'
 import { currencyFormat } from '../services/helper'
-//import { getUserPorfolio, getUserTrans } from '../services/api'
-import { watchlist, assetList, transactionList } from '../services/constants'
+import { getUserTrans } from '../services/api'
+import { assetList } from '../services/constants'
 import {
   InfoTitle,
   InfoBox,
@@ -19,6 +20,8 @@ import {
 export const PortfolioPage = () => {
   const userContext = useContext(UserContext)
   const [addedBalance, setAddedBalance] = useState(undefined)
+  const [loadingTrans, setLoadingTrans] = useState(false)
+  const [userTransactions, setUserTransactions] = useState([])
 
   const onEditClaim = (e) => {
     setAddedBalance(e.target.value)
@@ -29,17 +32,20 @@ export const PortfolioPage = () => {
   const onRemoveFromWatchlist = (equity) => {}
 
   useEffect(() => {
-    // Get user data: assetEquities, watchedEquities, accountBalance
-    // Update user info
+    const loadUserData = async () => {
+      setLoadingTrans(true)
+      const transRes = await getUserTrans(userContext.token)
 
-    console.log(userContext)
-    //console.log(transRes)
-    //  await updateUser(response.access_token, {
-    //   pk: newUser.pk,
-    //   first_name: newUser.first_name,
-    //   last_name: newUser.last_name,
-    // })
-  })
+      if (transRes.ok) {
+        delete transRes.ok
+        delete transRes.statusCode
+
+        setUserTransactions(transRes)
+      }
+      setLoadingTrans(false)
+    }
+    loadUserData()
+  }, [userContext])
 
   return (
     <div className='w-full'>
@@ -113,16 +119,20 @@ export const PortfolioPage = () => {
         <div className='flex-auto p-2'>
           <InfoTitle>Your watchlist</InfoTitle>
           <InfoBox>
-            <ul>
-              {watchlist.map((stock, idx) => (
-                <li key={`watchlist-${idx}`}>
-                  <EquityInfo
-                    equityData={stock}
-                    onRemoveClick={onRemoveFromWatchlist}
-                  />
-                </li>
-              ))}
-            </ul>
+            {userContext.watchedEquities.length > 0 ? (
+              <ul>
+                {userContext.watchedEquities.map((stock, idx) => (
+                  <li key={`watchlist-${idx}`}>
+                    <EquityInfo
+                      equityData={stock}
+                      onRemoveClick={onRemoveFromWatchlist}
+                    />
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className='text-center'>Watch list is empty</p>
+            )}
           </InfoBox>
           <InfoTitle>Your Assets</InfoTitle>
           <InfoBox>
@@ -144,30 +154,38 @@ export const PortfolioPage = () => {
       <div className='w-full px-4 py-1'>
         <InfoTitle>Your Transaction</InfoTitle>
         <InfoBox>
-          <div>
-            <InfoRow>
-              <strong>Trans. ID</strong>
-              <strong>Date Time</strong>
-              <strong>Transaction</strong>
-              <strong>Amount</strong>
-              <strong>Balance</strong>
-            </InfoRow>
-            {transactionList.map((item, idx) => (
-              <InfoRow key={idx}>
-                <span>{item.id}</span>
-                <span>{item.transDate}</span>
-                <span>{item.transContent}</span>
-                <span
-                  className={
-                    item.transType === 'plus' ? 'text-green' : 'text-red'
-                  }
-                >
-                  {currencyFormat(item.amount)}
-                </span>
-                <span>{currencyFormat(item.balance)}</span>
+          {userTransactions.length > 0 && !loadingTrans ? (
+            <div>
+              <InfoRow>
+                <strong>Trans. ID</strong>
+                <strong>Date Time</strong>
+                <strong>Transaction</strong>
+                <strong>Amount</strong>
+                <strong>Balance</strong>
               </InfoRow>
-            ))}
-          </div>
+              {userTransactions.map((item, idx) => (
+                <InfoRow key={idx}>
+                  <span>{item.id}</span>
+                  <span>
+                    {moment(item.transDate).format('DD MMM YYYY - hh:mm A')}
+                  </span>
+                  <span>{item.transContent}</span>
+                  <span
+                    className={
+                      item.transType === 'plus' ? 'text-green' : 'text-red'
+                    }
+                  >
+                    {currencyFormat(item.amount)}
+                  </span>
+                  <span>{currencyFormat(item.balance)}</span>
+                </InfoRow>
+              ))}
+            </div>
+          ) : (
+            <p className='text-center'>
+              {loadingTrans ? 'Loading...' : 'No Transaction'}
+            </p>
+          )}
         </InfoBox>
       </div>
       <Spacer height='3rem' />

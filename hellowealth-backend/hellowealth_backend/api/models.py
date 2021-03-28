@@ -33,7 +33,7 @@ class TradeTransaction(models.Model):
     user = models.ForeignKey(User, on_delete = models.CASCADE)
 
     def __str__(self):
-        return self.name
+        return self.transContent
 
 
 class UserPorfolio(models.Model):
@@ -50,3 +50,6 @@ class UserPorfolio(models.Model):
         help_text="User account balance")
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.username
