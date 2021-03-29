@@ -1,8 +1,10 @@
 import 'isomorphic-unfetch'
 import { objectToFormData } from 'object-to-formdata'
 
-// server: https://ec2-3-214-215-160.compute-1.amazonaws.com/
-export const API_BASE = 'https://ec2-3-214-215-160.compute-1.amazonaws.com/api/'
+// server1: https://ec2-3-214-215-160.compute-1.amazonaws.com/api/
+// server2: http://ec2-18-207-234-102.compute-1.amazonaws.com/api/
+// Use this cors-everywhere-me to by pass the https withou setup ssl with official certificate
+export const API_BASE = 'https://cors-everywhere-me.herokuapp.com/http://ec2-18-207-234-102.compute-1.amazonaws.com/api/'
 export const ENDPOINTS = {
   login: `${API_BASE}rest-auth/login/`,
   logout: `${API_BASE}rest-auth/logout/`,
