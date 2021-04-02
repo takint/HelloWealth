@@ -4,7 +4,11 @@ import EquityInfo from './EquityInfo'
 import { getEquityInfo, parseWatchedEquity } from '../services/helper'
 import { InfoBox } from '../styles/global.styles'
 
-export const WatchListBox = ({ watchedEquities, onRemoveEquityClick }) => {
+export const WatchListBox = ({
+  watchedEquities,
+  onRemoveEquityClick,
+  onBuy,
+}) => {
   const [watchListDetails, setWatchListDetails] = useState([])
   const [loading, setLoading] = useState(false)
 
@@ -15,6 +19,10 @@ export const WatchListBox = ({ watchedEquities, onRemoveEquityClick }) => {
 
     setWatchListDetails(nWatchList)
     onRemoveEquityClick && onRemoveEquityClick(equity)
+  }
+
+  const onBuyStock = (stock, quantity) => {
+    onBuy && onBuy(stock, quantity)
   }
 
   useEffect(() => {
@@ -52,6 +60,7 @@ export const WatchListBox = ({ watchedEquities, onRemoveEquityClick }) => {
               <EquityInfo
                 equityData={stock}
                 onRemoveClick={onRemoveFromWatchlist}
+                onBuyClick={onBuyStock}
               />
             </li>
           ))}
@@ -66,6 +75,7 @@ export const WatchListBox = ({ watchedEquities, onRemoveEquityClick }) => {
 WatchListBox.defaultProps = {
   watchedEquities: [],
   onRemoveEquityClick: () => {},
+  onBuy: () => {},
 }
 
 export default memo(WatchListBox)

@@ -61,16 +61,19 @@ export const DashboardPage = ({ equity }) => {
       setWatchlistBtn('Remove from watch list')
     }
 
-    userContext.setContext({ ...userContext, watchedEquities: nWatchList })
     setIsSubmitWatchList(true)
 
-    await updateUserPorfolio(userContext.token, {
+    const updateRes = await updateUserPorfolio(userContext.token, {
       alerts: userContext.alerts,
       assetEquities: userContext.assetEquities,
-      watchedEquities: userContext.watchedEquities,
+      watchedEquities: nWatchList,
       accountBalance: userContext.accountBalance,
       user: userContext.userProfile.userId,
     })
+
+    if (updateRes.ok) {
+      userContext.setContext({ ...userContext, watchedEquities: nWatchList })
+    }
 
     setIsSubmitWatchList(false)
   }

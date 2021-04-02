@@ -1,28 +1,76 @@
+import { useState, useEffect } from 'react'
 import EquityInfo from './EquityInfo'
+import LoadingSpinner from './LoadingSpinner'
+import { getEquityInfo, parseWatchedEquity } from '../services/helper'
 import { InfoBox } from '../styles/global.styles'
 
-export const UserAssetBox = () => {
-  const assetList = []
+export const UserAssetBox = ({ onBuy, onSell, assets }) => {
+  const [assetListDetails, setAssetListDetails] = useState([])
+  const [loading, setLoading] = useState(false)
 
-  const onBuyStock = (stock) => {}
-  const onSellStock = (stock) => {}
+  const onBuyStock = (stock, quantity) => {
+    onBuy && onBuy(stock, quantity)
+  }
+
+  const onSellStock = (stock, quantity) => {
+    onBuy && onSell(stock, quantity)
+  }
+
+  useEffect(() => {
+    const loadEquityData = async () => {
+      setLoading(true)
+      let allEquities = []
+
+      for (let i = 0; i < assets.length; i++) {
+        let equityData = await getEquityInfo(assets[i].symbol)
+        if (equityData.price !== null) {
+          allEquities.push({
+            ...parseWatchedEquity(equityData),
+            boughtAt: assets[i].boughtAt,
+          })
+        }
+      }
+
+      if (allEquities.length > 0) {
+        setAssetListDetails(allEquities)
+      }
+
+      setLoading(false)
+    }
+
+    if (!loading && assetListDetails.length === 0) {
+      loadEquityData()
+    }
+  }, [assets, assetListDetails, loading])
 
   return (
     <InfoBox>
-      <ul>
-        {assetList.map((stock, idx) => (
-          <li key={`asset-${idx}`}>
-            <EquityInfo
-              isOnAssetList
-              equityData={stock}
-              onBuyClick={onBuyStock}
-              onSellClick={onSellStock}
-            />
-          </li>
-        ))}
-      </ul>
+      {loading ? (
+        <LoadingSpinner isShow />
+      ) : assetListDetails.length > 0 ? (
+        <ul>
+          {assetListDetails.map((stock, idx) => (
+            <li key={`asset-${idx}`}>
+              <EquityInfo
+                isOnAssetList
+                equityData={stock}
+                onBuyClick={onBuyStock}
+                onSellClick={onSellStock}
+              />
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className='text-center'>Asset list is empty</p>
+      )}
     </InfoBox>
   )
+}
+
+UserAssetBox.defaultProps = {
+  onBuy: (stock, quantity) => {},
+  onSell: (stock, quantity) => {},
+  assets: [],
 }
 
 export default UserAssetBox

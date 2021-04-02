@@ -73,9 +73,7 @@ const DashboardNavBar = ({ onSearchInputChange }) => {
     const response = await logout()
     if (!response.error) {
       removeCookie(JWT_COOKIE)
-      userContext.setContext({
-        ...initialUserContext,
-      })
+      userContext.setContext(initialUserContext)
 
       history.push('/')
     }

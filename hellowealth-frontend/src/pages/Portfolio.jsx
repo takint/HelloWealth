@@ -1,6 +1,5 @@
 import { useContext, useState } from 'react'
 import DashboardNavBar from '../components/DashboardNavBar'
-import EquityInfo from '../components/EquityInfo'
 import WatchListBox from '../components/WatchListBox'
 import TransasctionBox from '../components/TransasctionBox'
 import UserBalanceBox from '../components/UserBalanceBox'
@@ -8,7 +7,7 @@ import UserAssetBox from '../components/UserAssetBox'
 import { UserContext } from '../services/context'
 import { currencyFormat } from '../services/helper'
 import { updateUserPorfolio, createUserTrans } from '../services/api'
-import { assetList, MAX_CLAIM } from '../services/constants'
+import { MAX_CLAIM } from '../services/constants'
 import {
   InfoTitle,
   InfoBox,
@@ -22,14 +21,104 @@ export const PortfolioPage = () => {
   const userContext = useContext(UserContext)
   const [addedBalance, setAddedBalance] = useState(0)
   const [cashError, setCashError] = useState(false)
-  const [watchList, setWatchList] = useState([]) //userContext.watchedEquities
+  const [watchList, setWatchList] = useState(userContext.watchedEquities)
+  const [assetList, setAssetList] = useState(userContext.assetEquities)
 
   const onEditClaim = (e) => {
     setAddedBalance(e.target.value)
   }
 
-  const onBuyStock = (equity) => {}
-  const onSellStock = (equity) => {}
+  const onBuyStock = async (equity, quantity) => {
+    let totalPrice = equity.buyPrice * quantity
+
+    if (totalPrice <= userContext.accountBalance) {
+      let boughtStock = {
+        symbol: equity.symbol,
+        boughtAt: equity.buyPrice,
+        quantityHold: quantity,
+      }
+
+      let nBalance = userContext.accountBalance - totalPrice
+
+      const postTransRes = await createUserTrans(userContext.token, {
+        transContent: `Buy ${quantity} of ${equity.symbol}`,
+        transType: 'sub',
+        amount: totalPrice,
+        balance: nBalance,
+        user: userContext.userProfile.userId,
+      })
+
+      if (postTransRes.ok) {
+        let nAsset = userContext.assetEquities
+        let existedAsset = nAsset.findIndex(
+          (item) => item.symbol === equity.symbol
+        )
+
+        if (existedAsset < 0) {
+          nAsset.push(boughtStock)
+        } else {
+          nAsset[existedAsset].boughtAt = equity.buyPrice
+          nAsset[existedAsset].quantityHold += quantity
+        }
+
+        userContext.setContext({
+          ...userContext,
+          accountBalance: nBalance,
+          assetEquities: nAsset,
+        })
+
+        await updateUserPorfolio(userContext.token, {
+          ...userContext,
+          accountBalance: nBalance,
+          assetEquities: nAsset,
+          user: userContext.userProfile.userId,
+        })
+
+        setAssetList(nAsset)
+      }
+    }
+  }
+
+  const onSellStock = async (equity, quantity) => {
+    let nAsset = userContext.assetEquities
+    let existedAsset = nAsset.findIndex((item) => item.symbol === equity.symbol)
+
+    if (quantity <= nAsset[existedAsset].quantityHold) {
+      let totalPrice = equity.buyPrice * quantity
+      let nBalance = userContext.accountBalance + totalPrice
+
+      const postTransRes = await createUserTrans(userContext.token, {
+        transContent: `Sell ${quantity} of ${equity.symbol}`,
+        transType: 'plus',
+        amount: totalPrice,
+        balance: nBalance,
+        user: userContext.userProfile.userId,
+      })
+
+      if (postTransRes.ok) {
+        if (nAsset[existedAsset] - quantity === 0) {
+          nAsset = nAsset.filter((stock) => stock.symbol !== equity.symbol)
+        } else {
+          nAsset[existedAsset].quantityHold -= quantity
+        }
+
+        userContext.setContext({
+          ...userContext,
+          accountBalance: nBalance,
+          assetEquities: nAsset,
+        })
+
+        await updateUserPorfolio(userContext.token, {
+          ...userContext,
+          accountBalance: nBalance,
+          assetEquities: nAsset,
+          user: userContext.userProfile.userId,
+        })
+
+        setAssetList(nAsset)
+      }
+    }
+  }
 
   const onClaimBtnClick = async () => {
     const addAmount = parseFloat(addedBalance)
@@ -44,7 +133,7 @@ export const PortfolioPage = () => {
     } else {
       const postTransRes = await createUserTrans(userContext.token, {
         transContent: 'Claim Virtual Cash',
-        transType: 'plus',
+        transType: addAmount > 0 ? 'plus' : 'sub',
         amount: addAmount,
         balance: balanceAdded,
         user: userContext.userProfile.userId,
@@ -121,22 +210,14 @@ export const PortfolioPage = () => {
           <WatchListBox
             watchedEquities={watchList}
             onRemoveEquityClick={onRemoveFromWatchlist}
+            onBuy={onBuyStock}
           />
           <InfoTitle>Your Assets</InfoTitle>
-          <InfoBox>
-            <ul>
-              {assetList.map((stock, idx) => (
-                <li key={`asset-${idx}`}>
-                  <EquityInfo
-                    isOnAssetList
-                    equityData={stock}
-                    onBuyClick={onBuyStock}
-                    onSellClick={onSellStock}
-                  />
-                </li>
-              ))}
-            </ul>
-          </InfoBox>
+          <UserAssetBox
+            assets={assetList}
+            onBuy={onBuyStock}
+            onSell={onSellStock}
+          />
         </div>
       </div>
       <TransasctionBox

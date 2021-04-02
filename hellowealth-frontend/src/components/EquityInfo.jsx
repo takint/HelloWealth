@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Chart } from 'react-google-charts'
 import DisplayPriceLabel from './DisplayPriceLabel'
 import { currencyFormat } from '../services/helper'
@@ -8,6 +9,7 @@ import {
   PriceBadge,
   Button,
   TradeButton,
+  FormInput,
 } from '../styles/global.styles'
 
 export const EquityInfo = ({
@@ -17,32 +19,88 @@ export const EquityInfo = ({
   onSellClick,
   isOnAssetList,
 }) => {
+  const [buyOpen, setBuyOpen] = useState(false)
+  const [sellOpen, setSellOpen] = useState(false)
+  const [addedStock, setAddedStock] = useState(0)
+  const [removedStock, setRemovedStock] = useState(0)
+  const numberFormat = new Intl.NumberFormat('en-CA')
+
+  const onBuyQuantityChange = (e) => {
+    setAddedStock(e.target.value)
+  }
+
+  const onSellQuantityChange = (e) => {
+    setRemovedStock(e.target.value)
+  }
+
+  const onToggleBuyBtnClick = () => setBuyOpen(!buyOpen)
+  const onToggleSellBtnClick = () => setSellOpen(!sellOpen)
+
   const onRemoveBtnClick = () => {
     onRemoveClick && onRemoveClick(equityData)
   }
 
   const onBuyBtnClick = () => {
-    onBuyClick && onBuyClick(equityData)
+    onBuyClick && onBuyClick(equityData, addedStock)
   }
 
   const onSellBtnClick = () => {
-    onSellClick && onSellClick(equityData)
+    onSellClick && onSellClick(equityData, removedStock)
   }
 
   return (
     <StockWrapper>
       <StockSymbolWrapper>
         <strong>{equityData.symbol}</strong>
-        {isOnAssetList ? (
+
+        <TradeButton type='button' onClick={onToggleBuyBtnClick}>
+          Buy
+        </TradeButton>
+        {buyOpen && (
+          <div className='flex flex-col mb-2 lg:block'>
+            <FormInput
+              type='number'
+              value={addedStock}
+              className='my-2 lg:mr-2 text-right'
+              placeholder='10'
+              onChange={onBuyQuantityChange}
+              min={0}
+              max={1000}
+              name='addedQuantity'
+            />
+            <Button onClick={onBuyBtnClick} type='button'>
+              Get Stock
+            </Button>
+          </div>
+        )}
+
+        {isOnAssetList && (
           <>
-            <TradeButton type='button' onClick={onBuyBtnClick}>
-              Buy
-            </TradeButton>
-            <TradeButton type='button' onClick={onSellBtnClick}>
+            <TradeButton type='button' onClick={onToggleSellBtnClick}>
               Sell
             </TradeButton>
+
+            {sellOpen && (
+              <div className='flex flex-col mb-2 lg:block'>
+                <FormInput
+                  type='number'
+                  value={removedStock}
+                  className='my-2 lg:mr-2 text-right'
+                  placeholder='10'
+                  onChange={onSellQuantityChange}
+                  min={0}
+                  max={1000}
+                  name='removedQuantity'
+                />
+                <Button onClick={onSellBtnClick} type='button'>
+                  Sell Stock
+                </Button>
+              </div>
+            )}
           </>
-        ) : (
+        )}
+
+        {!isOnAssetList && (
           <Button type='button' onClick={onRemoveBtnClick}>
             Remove
           </Button>
@@ -53,13 +111,13 @@ export const EquityInfo = ({
           <PriceWrapper>
             Buy at:
             <PriceBadge noArrow>
-              {currencyFormat(equityData.buyPrice)}
+              {currencyFormat(equityData.boughtAt)}
             </PriceBadge>
             Current:
-            <PriceBadge>
-              {`${currencyFormat(equityData.todayPrice)} (${
+            <PriceBadge isDown={equityData.changedPercent < 0}>
+              {`${currencyFormat(equityData.buyPrice)} (${numberFormat.format(
                 equityData.changedPercent
-              } %)`}
+              )} %)`}
             </PriceBadge>
           </PriceWrapper>
         </div>
