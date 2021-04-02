@@ -74,7 +74,6 @@ const DashboardNavBar = ({ onSearchInputChange }) => {
     if (!response.error) {
       removeCookie(JWT_COOKIE)
       userContext.setContext({
-        ...userContext,
         ...initialUserContext,
       })
 

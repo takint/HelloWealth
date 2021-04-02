@@ -1,24 +1,20 @@
 import cookie from 'js-cookie'
 
 export const setCookie = (key, value, expires) => {
-  if (process.browser) {
-    cookie.set(key, value, {
-      expires: expires || 1,
-      path: '/',
-    })
-  }
+  cookie.set(key, value, {
+    expires: expires || 1,
+    path: '/',
+  })
 }
 
 export const removeCookie = (key) => {
-  if (process.browser) {
-    cookie.remove(key, {
-      expires: 1,
-    })
-  }
+  cookie.remove(key, {
+    expires: 1,
+  })
 }
 
 export const getCookie = (key) => {
-  return process.browser ? getCookieFromBrowser(key) : null
+  return getCookieFromBrowser(key)
 }
 
 const getCookieFromBrowser = (key) => {

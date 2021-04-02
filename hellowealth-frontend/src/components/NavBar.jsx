@@ -16,8 +16,8 @@ const NavBar = () => {
         {menuItems.map((item, idx) => {
           return (
             <li key={idx}>
-              {item.url === '/news' ? (
-                <a href='/news'>{item.label}</a>
+              {['/news', '/login'].includes(item.url) ? (
+                <a href={item.url}>{item.label}</a>
               ) : (
                 <Link to={item.url} onClick={item.onMenuItemClick}>
                   {item.label}

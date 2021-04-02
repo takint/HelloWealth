@@ -5,7 +5,7 @@ import { getUserTrans } from '../services/api'
 import { currencyFormat } from '../services/helper'
 import { InfoTitle, InfoBox, InfoRow } from '../styles/global.styles'
 
-export const TransasctionBox = ({ token }) => {
+export const TransasctionBox = ({ token, newBalance }) => {
   const [loadingTrans, setLoadingTrans] = useState(false)
   const [userTransactions, setUserTransactions] = useState([])
 
@@ -18,12 +18,13 @@ export const TransasctionBox = ({ token }) => {
         delete transRes.ok
         delete transRes.statusCode
 
-        setUserTransactions(transRes)
+        setUserTransactions(transRes.reverse())
       }
       setLoadingTrans(false)
     }
+
     loadUserData()
-  }, [token])
+  }, [token, newBalance])
 
   return (
     <div className='w-full px-4 py-1'>
@@ -68,6 +69,7 @@ export const TransasctionBox = ({ token }) => {
 
 TransasctionBox.defaultProps = {
   token: '',
+  newBalance: 0,
 }
 
 export default TransasctionBox

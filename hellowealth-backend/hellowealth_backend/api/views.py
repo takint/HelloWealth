@@ -32,7 +32,6 @@ class GroupViewSet(viewsets.ModelViewSet):
     serializer_class = GroupSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-
 class UserPorfolioApiView(APIView):
     # add permission to check if user is authenticated
     queryset = UserPorfolio.objects.all()

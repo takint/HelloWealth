@@ -1,17 +1,17 @@
 import { useContext, useState } from 'react'
-import { Chart } from 'react-google-charts'
 import DashboardNavBar from '../components/DashboardNavBar'
 import EquityInfo from '../components/EquityInfo'
 import WatchListBox from '../components/WatchListBox'
 import TransasctionBox from '../components/TransasctionBox'
+import UserBalanceBox from '../components/UserBalanceBox'
+import UserAssetBox from '../components/UserAssetBox'
 import { UserContext } from '../services/context'
 import { currencyFormat } from '../services/helper'
-import { updateUserPorfolio } from '../services/api'
+import { updateUserPorfolio, createUserTrans } from '../services/api'
 import { assetList, MAX_CLAIM } from '../services/constants'
 import {
   InfoTitle,
   InfoBox,
-  PriceBadge,
   Button,
   FormInput,
   Spacer,
@@ -22,7 +22,7 @@ export const PortfolioPage = () => {
   const userContext = useContext(UserContext)
   const [addedBalance, setAddedBalance] = useState(0)
   const [cashError, setCashError] = useState(false)
-  const [watchList, setWatchList] = useState(userContext.watchedEquities)
+  const [watchList, setWatchList] = useState([]) //userContext.watchedEquities
 
   const onEditClaim = (e) => {
     setAddedBalance(e.target.value)
@@ -42,12 +42,22 @@ export const PortfolioPage = () => {
         setCashError(false)
       }, 2000)
     } else {
-      userContext.setContext({ ...userContext, accountBalance: balanceAdded })
-      await updateUserPorfolio(userContext.token, {
-        ...userContext,
-        accountBalance: balanceAdded,
+      const postTransRes = await createUserTrans(userContext.token, {
+        transContent: 'Claim Virtual Cash',
+        transType: 'plus',
+        amount: addAmount,
+        balance: balanceAdded,
         user: userContext.userProfile.userId,
       })
+
+      if (postTransRes.ok) {
+        userContext.setContext({ ...userContext, accountBalance: balanceAdded })
+        await updateUserPorfolio(userContext.token, {
+          ...userContext,
+          accountBalance: balanceAdded,
+          user: userContext.userProfile.userId,
+        })
+      }
     }
   }
 
@@ -77,45 +87,10 @@ export const PortfolioPage = () => {
           <InfoTitle>
             {`Howdy, ${userContext.userProfile.firstName}!`}
             <br />
-            <strong>Your porfolio value is:</strong>
-            <br />
-            <strong className='font-body text-4xl'>
-              {currencyFormat(userContext.accountBalance)}
-            </strong>
-            <p>
-              Your're profitting:
-              <PriceBadge>
-                {currencyFormat(10.0)} {'(1.2%)'}
-              </PriceBadge>
-            </p>
-            <br />
-            <InfoBox>
-              <Chart
-                width={'100%'}
-                height={'200px'}
-                chartType='AreaChart'
-                legendToggle={true}
-                loader={<div>Loading Chart</div>}
-                data={[
-                  ['Style', 'Balance'],
-                  ['W1', 5.2],
-                  ['W2', 5.6],
-                  ['W3', 7.2],
-                  ['W4', 5],
-                  ['W4', 4],
-                  ['W4', 6],
-                ]}
-                options={{
-                  height: 150,
-                  legend: 'none',
-                  colors: ['#538135'], //#b91c1c
-                  vAxis: {
-                    minValue: 3,
-                  },
-                }}
-                rootProps={{ 'data-testid': '1' }}
-              />
-            </InfoBox>
+            <UserBalanceBox
+              token={userContext.token}
+              accountBalance={userContext.accountBalance}
+            />
           </InfoTitle>
           <InfoTitle>
             Available cash for buying stock is:
@@ -164,7 +139,10 @@ export const PortfolioPage = () => {
           </InfoBox>
         </div>
       </div>
-      <TransasctionBox token={userContext.token} />
+      <TransasctionBox
+        token={userContext.token}
+        newBalance={userContext.accountBalance}
+      />
       <Spacer height='3rem' />
     </div>
   )
