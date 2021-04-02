@@ -4,7 +4,7 @@ import LoadingSpinner from './LoadingSpinner'
 import { getEquityInfo, parseWatchedEquity } from '../services/helper'
 import { InfoBox } from '../styles/global.styles'
 
-export const UserAssetBox = ({ onBuy, onSell, assets }) => {
+export const UserAssetBox = ({ onBuy, onSell, assets, onNewInfoLoaded }) => {
   const [assetListDetails, setAssetListDetails] = useState([])
   const [loading, setLoading] = useState(false)
 
@@ -27,6 +27,7 @@ export const UserAssetBox = ({ onBuy, onSell, assets }) => {
           allEquities.push({
             ...parseWatchedEquity(equityData),
             boughtAt: assets[i].boughtAt,
+            quantityHold: assets[i].quantityHold,
           })
         }
       }
@@ -35,13 +36,14 @@ export const UserAssetBox = ({ onBuy, onSell, assets }) => {
         setAssetListDetails(allEquities)
       }
 
+      onNewInfoLoaded && onNewInfoLoaded(allEquities)
       setLoading(false)
     }
 
     if (!loading && assetListDetails.length === 0) {
       loadEquityData()
     }
-  }, [assets, assetListDetails, loading])
+  }, [assets, assetListDetails, loading, onNewInfoLoaded])
 
   return (
     <InfoBox>
@@ -70,6 +72,7 @@ export const UserAssetBox = ({ onBuy, onSell, assets }) => {
 UserAssetBox.defaultProps = {
   onBuy: (stock, quantity) => {},
   onSell: (stock, quantity) => {},
+  onNewInfoLoaded: (updatedStocks) => {},
   assets: [],
 }
 

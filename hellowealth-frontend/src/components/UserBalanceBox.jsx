@@ -15,6 +15,7 @@ export const UserBalanceBox = ({ token, accountBalance, assetList }) => {
   const [balanceDataset, setBalanceDataset] = useState([])
   const [balanceChanged, setBalanceChanged] = useState(0)
   const [amountChanged, setAmountChanged] = useState(0)
+  const [porfolioValue, setPorfolioValue] = useState(accountBalance)
   const numberFormat = new Intl.NumberFormat('en-CA')
 
   useEffect(() => {
@@ -39,13 +40,22 @@ export const UserBalanceBox = ({ token, accountBalance, assetList }) => {
           ])
         })
 
+        let balanceFromStock = 0
+        assetList.forEach((stock) => {
+          let stockValue = stock.buyPrice * stock.quantityHold
+          balanceFromStock += stockValue ? stockValue : 0
+        })
+
         let firstTrans = transRes.find((trans) => trans.id === firstId)
         let lastTrans = transRes.find((trans) => trans.id === lastId)
-        let diffAmount = lastTrans.balance - firstTrans.balance
-        let newChanged = diffAmount / firstTrans.balance
+        let firstBalance = parseFloat(firstTrans.balance)
+        let lastBalance = parseFloat(lastTrans.balance)
+        let diffAmount = lastBalance + balanceFromStock - firstBalance
+        let newChanged = (diffAmount / firstBalance) * 100
 
         setAmountChanged(diffAmount)
         setBalanceChanged(newChanged)
+        setPorfolioValue(firstBalance + diffAmount)
       } else if (transRes.statusCode === 401) {
         userContext.setContext(initialUserContext)
         history.push('/')
@@ -56,14 +66,14 @@ export const UserBalanceBox = ({ token, accountBalance, assetList }) => {
     }
 
     loadUserData()
-  }, [token, accountBalance, history, userContext])
+  }, [token, accountBalance, assetList, history, userContext])
 
   return (
     <>
       <strong>Your porfolio value is:</strong>
       <br />
       <strong className='font-body text-4xl'>
-        {currencyFormat(accountBalance)}
+        {loadingBalance ? 'calculating...' : currencyFormat(porfolioValue)}
       </strong>
       <p>
         Your're {balanceChanged < 0 ? 'losses' : 'profitting'}:

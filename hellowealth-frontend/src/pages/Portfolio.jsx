@@ -23,9 +23,14 @@ export const PortfolioPage = () => {
   const [cashError, setCashError] = useState(false)
   const [watchList, setWatchList] = useState(userContext.watchedEquities)
   const [assetList, setAssetList] = useState(userContext.assetEquities)
+  const [assetValueList, setAssetValueList] = useState([])
 
   const onEditClaim = (e) => {
     setAddedBalance(e.target.value)
+  }
+
+  const onAssetUpdated = (updatedAssets) => {
+    setAssetValueList(updatedAssets)
   }
 
   const onBuyStock = async (equity, quantity) => {
@@ -179,6 +184,7 @@ export const PortfolioPage = () => {
             <UserBalanceBox
               token={userContext.token}
               accountBalance={userContext.accountBalance}
+              assetList={assetValueList}
             />
           </InfoTitle>
           <InfoTitle>
@@ -217,6 +223,7 @@ export const PortfolioPage = () => {
             assets={assetList}
             onBuy={onBuyStock}
             onSell={onSellStock}
+            onNewInfoLoaded={onAssetUpdated}
           />
         </div>
       </div>

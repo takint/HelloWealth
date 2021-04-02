@@ -2,7 +2,7 @@ import cookie from 'js-cookie'
 
 export const setCookie = (key, value, expires) => {
   cookie.set(key, value, {
-    expires: expires || 1,
+    expires: expires || 365,
     path: '/',
   })
 }

@@ -41,17 +41,21 @@ export const EquityInfo = ({
   }
 
   const onBuyBtnClick = () => {
-    onBuyClick && onBuyClick(equityData, addedStock)
+    onBuyClick && onBuyClick(equityData, parseInt(addedStock))
   }
 
   const onSellBtnClick = () => {
-    onSellClick && onSellClick(equityData, removedStock)
+    onSellClick && onSellClick(equityData, parseInt(removedStock))
   }
 
   return (
     <StockWrapper>
       <StockSymbolWrapper>
-        <strong>{equityData.symbol}</strong>
+        <strong>{`${equityData.symbol} ${
+          equityData.quantityHold
+            ? '(holding ' + equityData.quantityHold + ')'
+            : ''
+        }`}</strong>
 
         <TradeButton type='button' onClick={onToggleBuyBtnClick}>
           Buy
