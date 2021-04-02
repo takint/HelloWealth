@@ -56,7 +56,7 @@ export const UserBalanceBox = ({ token, accountBalance, assetList }) => {
     }
 
     loadUserData()
-  }, [token, accountBalance])
+  }, [token, accountBalance, history, userContext])
 
   return (
     <>
