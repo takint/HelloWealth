@@ -1,5 +1,7 @@
 import {chartDisplayText} from '../styles/global.styles'
 
+export const MAX_CLAIM = 10000
+
 export const PRICE_CANDLESTICK_OPT = {
   legend: 'none',
   bar: { groupWidth: '100%' }, // Remove space between bars.

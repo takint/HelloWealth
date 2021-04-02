@@ -109,6 +109,8 @@ export const Button = styled.button`
 export const WatchListButton = styled(Button)`
   height: 45px;
   width: 200px;
+
+  ${(props) => props.disabled && tw`bg-gray-700`}
 `
 
 export const TradeButton = styled(Button)`

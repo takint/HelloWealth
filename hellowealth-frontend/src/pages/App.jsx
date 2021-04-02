@@ -10,7 +10,7 @@ import {
 import NavBar from '../components/NavBar'
 import SocialMenu from '../components/SocialMenu'
 import BasedRoutes, { PrivateRoutes } from '../router'
-import { checkAccess, getUser } from '../services/api'
+import { checkAccess, getUser, getUserPorfolio } from '../services/api'
 import { initialUserContext, UserContext } from '../services/context'
 import { getCookie, JWT_COOKIE } from '../services/cookies'
 import { isNullOrEmpty } from '../services/helper'
@@ -52,15 +52,24 @@ class App extends Component {
       ) {
         currentUser.isAuthorized = true
         currentUser.token = token
-        currentUser = {
-          ...currentUser,
-          userProfile: {
-            email: userResponse.email,
-            first_name: userResponse.first_name,
-            last_name: userResponse.last_name,
-            userId: userResponse.pk,
-            username: userResponse.username,
-          },
+
+        const porfolioRes = await getUserPorfolio(token)
+
+        if (porfolioRes.ok) {
+          currentUser = {
+            ...currentUser,
+            userProfile: {
+              email: userResponse.email,
+              first_name: userResponse.first_name,
+              last_name: userResponse.last_name,
+              userId: userResponse.pk,
+              username: userResponse.username,
+            },
+            alerts: porfolioRes.alerts,
+            accountBalance: parseFloat(porfolioRes.accountBalance),
+            assetEquities: porfolioRes.assetEquities,
+            watchedEquities: porfolioRes.watchedEquities,
+          }
         }
       }
     }

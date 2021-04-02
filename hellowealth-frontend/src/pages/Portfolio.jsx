@@ -1,27 +1,28 @@
-import { useContext, useState, useEffect } from 'react'
+import { useContext, useState } from 'react'
 import { Chart } from 'react-google-charts'
-import moment from 'moment'
 import DashboardNavBar from '../components/DashboardNavBar'
 import EquityInfo from '../components/EquityInfo'
+import WatchListBox from '../components/WatchListBox'
+import TransasctionBox from '../components/TransasctionBox'
 import { UserContext } from '../services/context'
 import { currencyFormat } from '../services/helper'
-import { getUserTrans } from '../services/api'
-import { assetList } from '../services/constants'
+import { updateUserPorfolio } from '../services/api'
+import { assetList, MAX_CLAIM } from '../services/constants'
 import {
   InfoTitle,
   InfoBox,
-  InfoRow,
   PriceBadge,
   Button,
   FormInput,
   Spacer,
+  ErrorMsg,
 } from '../styles/global.styles'
 
 export const PortfolioPage = () => {
   const userContext = useContext(UserContext)
-  const [addedBalance, setAddedBalance] = useState(undefined)
-  const [loadingTrans, setLoadingTrans] = useState(false)
-  const [userTransactions, setUserTransactions] = useState([])
+  const [addedBalance, setAddedBalance] = useState(0)
+  const [cashError, setCashError] = useState(false)
+  const [watchList, setWatchList] = useState(userContext.watchedEquities)
 
   const onEditClaim = (e) => {
     setAddedBalance(e.target.value)
@@ -29,23 +30,44 @@ export const PortfolioPage = () => {
 
   const onBuyStock = (equity) => {}
   const onSellStock = (equity) => {}
-  const onRemoveFromWatchlist = (equity) => {}
 
-  useEffect(() => {
-    const loadUserData = async () => {
-      setLoadingTrans(true)
-      const transRes = await getUserTrans(userContext.token)
+  const onClaimBtnClick = async () => {
+    const addAmount = parseFloat(addedBalance)
+    const balanceAdded = userContext.accountBalance + addAmount
 
-      if (transRes.ok) {
-        delete transRes.ok
-        delete transRes.statusCode
-
-        setUserTransactions(transRes)
-      }
-      setLoadingTrans(false)
+    if (addAmount > MAX_CLAIM || balanceAdded > MAX_CLAIM) {
+      setCashError(true)
+      setAddedBalance(0)
+      setTimeout(() => {
+        setCashError(false)
+      }, 2000)
+    } else {
+      userContext.setContext({ ...userContext, accountBalance: balanceAdded })
+      await updateUserPorfolio(userContext.token, {
+        ...userContext,
+        accountBalance: balanceAdded,
+        user: userContext.userProfile.userId,
+      })
     }
-    loadUserData()
-  }, [userContext])
+  }
+
+  const onRemoveFromWatchlist = async (equity) => {
+    let nWatchList = userContext.watchedEquities.filter(
+      (symbol) => equity.symbol !== symbol
+    )
+
+    userContext.setContext({ ...userContext, watchedEquities: nWatchList })
+
+    await updateUserPorfolio(userContext.token, {
+      alerts: userContext.alerts,
+      assetEquities: userContext.assetEquities,
+      watchedEquities: userContext.watchedEquities,
+      accountBalance: userContext.accountBalance,
+      user: userContext.userProfile.userId,
+    })
+
+    setWatchList(nWatchList)
+  }
 
   return (
     <div className='w-full'>
@@ -104,6 +126,7 @@ export const PortfolioPage = () => {
           </InfoTitle>
           <InfoTitle>If you want to try your trading skills</InfoTitle>
           <InfoBox className='flex flex-col lg:block'>
+            {cashError && <ErrorMsg>Virtual Cash limit exceed!</ErrorMsg>}
             <label>Amount $:</label>
             <FormInput
               type='number'
@@ -113,27 +136,17 @@ export const PortfolioPage = () => {
               onChange={onEditClaim}
               name='userBalance'
             />
-            <Button type='button'>Claim virtual cash</Button>
+            <Button onClick={onClaimBtnClick} type='button'>
+              Claim virtual cash
+            </Button>
           </InfoBox>
         </div>
         <div className='flex-auto p-2'>
           <InfoTitle>Your watchlist</InfoTitle>
-          <InfoBox>
-            {userContext.watchedEquities.length > 0 ? (
-              <ul>
-                {userContext.watchedEquities.map((stock, idx) => (
-                  <li key={`watchlist-${idx}`}>
-                    <EquityInfo
-                      equityData={stock}
-                      onRemoveClick={onRemoveFromWatchlist}
-                    />
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className='text-center'>Watch list is empty</p>
-            )}
-          </InfoBox>
+          <WatchListBox
+            watchedEquities={watchList}
+            onRemoveEquityClick={onRemoveFromWatchlist}
+          />
           <InfoTitle>Your Assets</InfoTitle>
           <InfoBox>
             <ul>
@@ -151,43 +164,7 @@ export const PortfolioPage = () => {
           </InfoBox>
         </div>
       </div>
-      <div className='w-full px-4 py-1'>
-        <InfoTitle>Your Transaction</InfoTitle>
-        <InfoBox>
-          {userTransactions.length > 0 && !loadingTrans ? (
-            <div>
-              <InfoRow>
-                <strong>Trans. ID</strong>
-                <strong>Date Time</strong>
-                <strong>Transaction</strong>
-                <strong>Amount</strong>
-                <strong>Balance</strong>
-              </InfoRow>
-              {userTransactions.map((item, idx) => (
-                <InfoRow key={idx}>
-                  <span>{item.id}</span>
-                  <span>
-                    {moment(item.transDate).format('DD MMM YYYY - hh:mm A')}
-                  </span>
-                  <span>{item.transContent}</span>
-                  <span
-                    className={
-                      item.transType === 'plus' ? 'text-green' : 'text-red'
-                    }
-                  >
-                    {currencyFormat(item.amount)}
-                  </span>
-                  <span>{currencyFormat(item.balance)}</span>
-                </InfoRow>
-              ))}
-            </div>
-          ) : (
-            <p className='text-center'>
-              {loadingTrans ? 'Loading...' : 'No Transaction'}
-            </p>
-          )}
-        </InfoBox>
-      </div>
+      <TransasctionBox token={userContext.token} />
       <Spacer height='3rem' />
     </div>
   )

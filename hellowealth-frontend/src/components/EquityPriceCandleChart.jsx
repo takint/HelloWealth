@@ -11,7 +11,7 @@ export const EquityPriceCandleChart = ({ priceHistory, isLoading }) => {
       width='100%'
       height={350}
       chartType='CandlestickChart'
-      loader={<div>Loading...</div>}
+      loader={<LoadingSpinner isShow />}
       data={priceHistory}
       options={PRICE_CANDLESTICK_OPT}
       rootProps={{ 'data-testid': '1' }}

@@ -1,4 +1,5 @@
 import { Chart } from 'react-google-charts'
+import DisplayPriceLabel from './DisplayPriceLabel'
 import { currencyFormat } from '../services/helper'
 import {
   StockWrapper,
@@ -16,8 +17,6 @@ export const EquityInfo = ({
   onSellClick,
   isOnAssetList,
 }) => {
-  const numberFormat = new Intl.NumberFormat('en-CA')
-
   const onRemoveBtnClick = () => {
     onRemoveClick && onRemoveClick(equityData)
   }
@@ -77,18 +76,20 @@ export const EquityInfo = ({
             </PriceBadge>
           </PriceWrapper>
           <PriceWrapper>
-            Open:{' '}
-            <PriceBadge isDown={equityData.changedPercentOpen <= 0}>
-              {`${currencyFormat(equityData.openPrice)} (${numberFormat.format(
-                equityData.changedPercentOpen
-              )} %)`}
-            </PriceBadge>
-            Close:{' '}
-            <PriceBadge isDown={equityData.changedPercentClose <= 0}>
-              {`${currencyFormat(equityData.closePrice)} (${numberFormat.format(
-                equityData.changedPercentClose
-              )} %)`}
-            </PriceBadge>
+            <DisplayPriceLabel
+              id={'open-1'}
+              priceChange={equityData.changedPercentOpen}
+              equityPrice={equityData.openPrice}
+              priceType='Open'
+              toolTips='This price is compared to previouse closed price'
+            />
+            <DisplayPriceLabel
+              id={'close-1'}
+              priceChange={equityData.changedPercentClose}
+              equityPrice={equityData.closePrice}
+              priceType='Close'
+              toolTips='This price is compared to today opened price'
+            />
           </PriceWrapper>
         </div>
       )}

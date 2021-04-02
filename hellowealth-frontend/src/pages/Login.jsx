@@ -37,10 +37,10 @@ export const LoginPage = ({ pageHeader, errorMessage }) => {
           token: response.access_token,
           refresh_token: response.refresh_token,
           isAuthorized: true,
-          alerts: JSON.parse(porfolioRes.alerts),
+          alerts: porfolioRes.alerts,
           accountBalance: parseFloat(porfolioRes.accountBalance),
-          assetEquities: JSON.parse(porfolioRes.assetEquities),
-          watchedEquities: JSON.parse(porfolioRes.watchedEquities),
+          assetEquities: porfolioRes.assetEquities,
+          watchedEquities: porfolioRes.watchedEquities,
           userProfile: {
             userId: response.user.pk,
             username: response.user.username,

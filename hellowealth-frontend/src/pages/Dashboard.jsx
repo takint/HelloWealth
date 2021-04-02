@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import { Chart } from 'react-google-charts'
 import LoadingSpinner from '../components/LoadingSpinner'
 import MarketDetailsBox from '../components/MarketDetailsBox'
@@ -10,106 +10,81 @@ import {
   Spacer,
   WatchListButton,
 } from '../styles/global.styles'
-import { getEquitySummary, getEquityPriceHistory } from '../services/api'
-import { isNullOrEmpty, buildEquityPriceDataframe } from '../services/helper'
+import { updateUserPorfolio } from '../services/api'
+import { isNullOrEmpty, getEquityInfo } from '../services/helper'
 import { UserContext } from '../services/context'
+
+const PRICE_TREND_CHART = {
+  backgroundColor: '#000',
+  colors: ['cyan'],
+  trendlines: {
+    0: {
+      type: 'polynomial',
+      degree: 3,
+      color: 'cyan',
+      visibleInLegend: true,
+      labelInLegend: 'Trend',
+    },
+  },
+}
 
 export const DashboardPage = ({ equity }) => {
   const userContext = useContext(UserContext)
   const [loading, setLoading] = useState(false)
   const [equityDetails, setEquityDetails] = useState(null)
+  const [watchlistBtn, setWatchlistBtn] = useState('Add to watch list')
+  const [isSubmitWatchList, setIsSubmitWatchList] = useState(false)
 
   const onSearchHeaderChange = async (selectedEquity) => {
     if (!isNullOrEmpty(selectedEquity)) {
       setLoading(true)
-      const requestParam = {
-        region: 'US',
-        symbol: selectedEquity.value,
-      }
-      const historyDf = [
-        [
-          'Day',
-          'Min. Price',
-          'Open Price',
-          'Close Price',
-          'High Price',
-          { type: 'string', role: 'tooltip' },
-        ],
-      ]
-      const openPriceList = [['Market price', 'Close']]
+      let equityInfo = await getEquityInfo(selectedEquity.data.symbol)
 
-      const [summaryResp, historyResp] = await Promise.all([
-        getEquitySummary(requestParam),
-        getEquityPriceHistory(requestParam),
-      ])
-
-      if (!summaryResp.error && summaryResp.ok) {
-        if (!historyResp.error && historyResp.ok) {
-          const priceDf = buildEquityPriceDataframe(historyResp.prices)
-          priceDf.forEach((row) => {
-            historyDf.push(row)
-            openPriceList.push([row[1], row[2]])
-          })
-        }
-
-        setEquityDetails({
-          symbol: selectedEquity.data.symbol,
-          longname: selectedEquity.data.longname,
-          price: summaryResp.price,
-          summaryDetail: summaryResp.summaryDetail,
-          summaryProfile: summaryResp.summaryProfile,
-          priceHistory: historyDf,
-          priceTrend: openPriceList,
-        })
+      if (equityInfo.price !== null) {
+        setEquityDetails(equityInfo)
       }
 
       setLoading(false)
     }
   }
 
-  const addToWatchList = () => {
-    let watchListItem = {
-      symbol: equityDetails.symbol,
-      minPrice: 0,
-      buyPrice: 0,
-      todayPrice: 0,
-      changedPercent: 0,
-      highPrice: 0,
-      lowPrice: 0,
-      openPrice: 0,
-      changedPercentOpen: 0,
-      closePrice: 0,
-      changedPercentClose: 0,
-      weeklyPrices: [],
+  const watchListBtnClick = async () => {
+    let nWatchList = userContext.watchedEquities
+
+    if (userContext.watchedEquities.includes(equityDetails.symbol)) {
+      nWatchList = userContext.watchedEquities.filter(
+        (symbol) => symbol !== equityDetails.symbol
+      )
+      setWatchlistBtn('Add to watch list')
+    } else {
+      nWatchList.push(equityDetails.symbol)
+      setWatchlistBtn('Remove from watch list')
     }
 
-    if (equityDetails.priceHistory) {
-      const monthPrice = equityDetails.priceHistory.slice(1, 21)
-      monthPrice.forEach((price) => {
-        let priceDay = [price[0], price[3]]
-        watchListItem.weeklyPrices.push(priceDay)
-      })
-    }
+    userContext.setContext({ ...userContext, watchedEquities: nWatchList })
+    setIsSubmitWatchList(true)
 
-    if (equityDetails.price) {
-      watchListItem.minPrice = equityDetails.price.regularMarketDayLow.raw
-      watchListItem.buyPrice = equityDetails.price.regularMarketPrice.raw
-      watchListItem.todayPrice = equityDetails.price.postMarketPrice.raw
-      watchListItem.changedPercent =
-        equityDetails.price.regularMarketChangePercent.raw
-      watchListItem.changedPercentOpen =
-        equityDetails.price.regularMarketChangePercent.raw
-      watchListItem.highPrice = equityDetails.price.regularMarketDayHigh.raw
-      watchListItem.lowPrice = equityDetails.price.regularMarketDayLow.raw
-      watchListItem.openPrice = equityDetails.price.regularMarketOpen.raw
-      watchListItem.closePrice = equityDetails.price.postMarketPrice.raw
-      watchListItem.changedPercentClose =
-        equityDetails.price.postMarketChangePercent.raw
-    }
+    await updateUserPorfolio(userContext.token, {
+      alerts: userContext.alerts,
+      assetEquities: userContext.assetEquities,
+      watchedEquities: userContext.watchedEquities,
+      accountBalance: userContext.accountBalance,
+      user: userContext.userProfile.userId,
+    })
 
-    userContext.watchedEquities.push(watchListItem)
-    userContext.setContext(userContext)
+    setIsSubmitWatchList(false)
   }
+
+  useEffect(() => {
+    if (
+      equityDetails &&
+      userContext.watchedEquities.includes(equityDetails.symbol)
+    ) {
+      setWatchlistBtn('Remove to watch list')
+    } else {
+      setWatchlistBtn('Add to watch list')
+    }
+  }, [equityDetails, userContext.watchedEquities])
 
   return (
     <div className='w-full'>
@@ -131,8 +106,12 @@ export const DashboardPage = ({ equity }) => {
                   {equityDetails.longname}
                 </strong>
               </h2>
-              <WatchListButton onClick={addToWatchList} type='button'>
-                Add to watch list
+              <WatchListButton
+                disabled={isSubmitWatchList}
+                onClick={watchListBtnClick}
+                type='button'
+              >
+                {isSubmitWatchList ? 'Saving...' : watchlistBtn}
               </WatchListButton>
             </div>
             <div className='flex flex-col'>
@@ -172,20 +151,8 @@ export const DashboardPage = ({ equity }) => {
                     chartType='ScatterChart'
                     loader={<LoadingSpinner isShow />}
                     data={equityDetails.priceTrend}
-                    options={{
-                      backgroundColor: '#000',
-                      colors: ['cyan'],
-                      trendlines: {
-                        0: {
-                          type: 'polynomial',
-                          degree: 3,
-                          color: 'cyan',
-                          visibleInLegend: true,
-                          labelInLegend: 'Trend',
-                        },
-                      },
-                    }}
-                    rootProps={{ 'data-testid': '2' }}
+                    options={{ ...PRICE_TREND_CHART }}
+                    rootProps={{ 'data-testid': 'priceTrend' }}
                   />
                 )}
               </InfoBox>

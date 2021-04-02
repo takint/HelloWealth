@@ -1,5 +1,6 @@
 import * as Yup from 'yup'
 import moment from 'moment'
+import { getEquitySummary, getEquityPriceHistory } from './api'
 
 export const EMAIL_REGEX = /^(()|(\s?[^\s,]+@[^\s,]+\.[^\s,]+\s?,)*(\s?[^\s,]+@[^\s,]+\.[^\s,]+))$/
 export const PHONE_REGEX = /^\+?([0-9]{2})\)?([0-9]{8,25})$/
@@ -297,4 +298,125 @@ export const currencyFormat = (val, kFormat = false) => {
     }
   }
   return `${CURRENCY_SYMBOL}${new Intl.NumberFormat('en-CA').format(val)}`
+}
+
+/*
+  ----------------------------------------------------------------------------------------------------
+  getRawOrDefault()
+  ----------------------------------------------------------------------------------------------------
+  Check and get data if it has any value or return 0
+*/
+export const getRawOrDefault = (rawData) => {
+  return rawData ? rawData.raw : 0
+}
+
+/*
+  ----------------------------------------------------------------------------------------------------
+  parseWatchedEquity()
+  ----------------------------------------------------------------------------------------------------
+  Parse equity data from api to local format
+*/
+export const parseWatchedEquity = (equityDetails) => {
+  let watchListItem = {
+    symbol: equityDetails.symbol,
+    minPrice: 0,
+    buyPrice: 0,
+    todayPrice: 0,
+    changedPercent: 0,
+    highPrice: 0,
+    lowPrice: 0,
+    openPrice: 0,
+    changedPercentOpen: 0,
+    closePrice: 0,
+    changedPercentClose: 0,
+    weeklyPrices: [],
+  }
+
+  if (equityDetails.priceHistory) {
+    const monthPrice = equityDetails.priceHistory.slice(1, 21)
+    monthPrice.forEach((price) => {
+      let priceDay = [price[0], price[3]]
+      watchListItem.weeklyPrices.push(priceDay)
+    })
+  }
+
+  if (equityDetails.price) {
+    watchListItem.minPrice = equityDetails.price.regularMarketDayLow.raw
+    watchListItem.buyPrice = equityDetails.price.regularMarketPrice.raw
+    watchListItem.todayPrice = equityDetails.price.postMarketPrice.raw
+    watchListItem.changedPercent =
+      equityDetails.price.regularMarketChangePercent.raw
+    watchListItem.changedPercentOpen =
+      equityDetails.price.regularMarketChangePercent.raw
+    watchListItem.highPrice = equityDetails.price.regularMarketDayHigh.raw
+    watchListItem.lowPrice = equityDetails.price.regularMarketDayLow.raw
+    watchListItem.openPrice = equityDetails.price.regularMarketOpen.raw
+    watchListItem.closePrice = equityDetails.price.postMarketPrice.raw
+    watchListItem.changedPercentClose =
+      equityDetails.price.postMarketChangePercent.raw
+  }
+
+  return watchListItem
+}
+
+/*
+  ----------------------------------------------------------------------------------------------------
+  getEquityInfo()
+  ----------------------------------------------------------------------------------------------------
+  getEquity info from Financial API
+*/
+export const getEquityInfo = async (symbol) => {
+
+  let equityDetails = {
+    symbol: '',
+    longname: '',
+    price: null,
+    summaryDetail: null,
+    summaryProfile: null,
+    priceHistory: null,
+    priceTrend: null,
+  }
+
+  const requestParam = {
+    region: 'US',
+    symbol: symbol,
+  }
+  const historyDf = [
+    [
+      'Day',
+      'Min. Price',
+      'Open Price',
+      'Close Price',
+      'High Price',
+      { type: 'string', role: 'tooltip' },
+    ],
+  ]
+  const openPriceList = [['Market price', 'Close']]
+
+  const [summaryResp, historyResp] = await Promise.all([
+    getEquitySummary(requestParam),
+    getEquityPriceHistory(requestParam),
+  ])
+
+  if (!summaryResp.error && summaryResp.ok) {
+    if (!historyResp.error && historyResp.ok) {
+      const priceDf = buildEquityPriceDataframe(historyResp.prices)
+      priceDf.forEach((row) => {
+        historyDf.push(row)
+        openPriceList.push([row[1], row[2]])
+      })
+    }
+
+    equityDetails = {
+      symbol: symbol,
+      longname: summaryResp.price.longName,
+      price: summaryResp.price,
+      summaryDetail: summaryResp.summaryDetail,
+      summaryProfile: summaryResp.summaryProfile,
+      priceHistory: historyDf,
+      priceTrend: openPriceList,
+    }
+  }
+
+  return equityDetails
 }
