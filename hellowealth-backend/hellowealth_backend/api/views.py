@@ -1,5 +1,5 @@
 from django.shortcuts import render
-
+import pymongo
 # Create your views here.
 from django.contrib.auth.models import User, Group
 from django.core import serializers
@@ -88,23 +88,6 @@ class UserPorfolioApiView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # 4.  Delete
-    #def delete(self, request, todo_id, *args, **kwargs):
-    #    '''
-    #    Deletes the todo item with given todo_id if exists
-    #    '''
-    #    todo_instance = self.get_object(todo_id, request.user.id)
-    #    if not todo_instance:
-    #        return Response(
-    #            {"res": "Object with todo id does not exists"},
-    #            status=status.HTTP_400_BAD_REQUEST
-    #        )
-    #    todo_instance.delete()
-    #    return Response(
-    #        {"res": "Object deleted!"},
-    #        status=status.HTTP_200_OK
-    #    )
-
 class TradeTransactionApiView(APIView):
     # add permission to check if user is authenticated
     queryset = TradeTransaction.objects.all()
@@ -128,3 +111,15 @@ class TradeTransactionApiView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class StockPredictionApiView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    client = pymongo.MongoClient("mongodb+srv://hellowealth-app:xWVR6rro6WE1FiOa@hellowealth.wnyrs.mongodb.net/stock_db?retryWrites=true&w=majority")
+
+    def get(self, request, *args, **kwargs):
+        db = self.client.stock_db
+        predict_list = []
+        for item in db.p_msft.find():
+            predict_list.append([str(item["date"]), item["Close"]])
+
+        return Response(predict_list, status=status.HTTP_200_OK)
