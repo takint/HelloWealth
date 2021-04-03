@@ -3,6 +3,7 @@ import { objectToFormData } from 'object-to-formdata'
 
 // server1: https://ec2-3-214-215-160.compute-1.amazonaws.com/api/
 // server2: http://ec2-18-207-234-102.compute-1.amazonaws.com/api/
+// live server: https://cors-everywhere-me.herokuapp.com/http://ec2-18-207-234-102.compute-1.amazonaws.com/api/
 // Use this cors-everywhere-me to by pass the https withou setup ssl with official certificate
 export const API_BASE = 'https://cors-everywhere-me.herokuapp.com/http://ec2-18-207-234-102.compute-1.amazonaws.com/api/'
 export const ENDPOINTS = {
@@ -19,7 +20,7 @@ export const ENDPOINTS = {
   userTransaction: `${API_BASE}transaction/`,
 }
 
-const APIKEY = '24e6fb3517msh440342105a0dcf5p10d467jsn8387aa179d81' //'zcvxJsWzSufs6KeNMbpauritS1UTGh2h'
+const APIKEY = 'zcvxJsWzSufs6KeNMbpauritS1UTGh2h' //'24e6fb3517msh440342105a0dcf5p10d467jsn8387aa179d81'
 export const FIN_API = 'https://apidojo-yahoo-finance-v1.p.rapidapi.com/'
 export const FIN_ENPOINTS = {
   autoComplete: `${FIN_API}auto-complete/`,
@@ -134,6 +135,7 @@ export const apiCall = async (
         error.statusCode = response.status
         error.ok = false
       }
+
       return error
     })
 }
