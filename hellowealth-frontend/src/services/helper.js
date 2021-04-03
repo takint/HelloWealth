@@ -415,6 +415,7 @@ export const getEquityInfo = async (symbol) => {
       summaryProfile: summaryResp.summaryProfile,
       priceHistory: historyDf,
       priceTrend: openPriceList,
+      predictPrices: null
     }
   }
 

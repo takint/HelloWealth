@@ -1,5 +1,6 @@
 import { useState, useContext, useEffect } from 'react'
 import { Chart } from 'react-google-charts'
+import moment from 'moment'
 import LoadingSpinner from '../components/LoadingSpinner'
 import MarketDetailsBox from '../components/MarketDetailsBox'
 import EquityPriceCandleChart from '../components/EquityPriceCandleChart'
@@ -10,7 +11,7 @@ import {
   Spacer,
   WatchListButton,
 } from '../styles/global.styles'
-import { updateUserPorfolio } from '../services/api'
+import { updateUserPorfolio, getStockPrediction } from '../services/api'
 import { isNullOrEmpty, getEquityInfo } from '../services/helper'
 import { UserContext } from '../services/context'
 
@@ -41,6 +42,24 @@ export const DashboardPage = ({ equity }) => {
       let equityInfo = await getEquityInfo(selectedEquity.data.symbol)
 
       if (equityInfo.price !== null) {
+        // Currently we only run example prediction for MSFT
+        if (selectedEquity.data.symbol === 'MSFT') {
+          let predictRes = await getStockPrediction(userContext.token)
+
+          if (predictRes.ok) {
+            delete predictRes.ok
+            delete predictRes.statusCode
+
+            const predictPrices = [['Dates', 'Predicted Price']]
+
+            predictRes.forEach((price) => {
+              predictPrices.push([moment(price[0]).format('DD MMM'), price[1]])
+            })
+
+            equityInfo.predictPrices = predictPrices
+          }
+        }
+
         setEquityDetails(equityInfo)
       }
 
@@ -145,7 +164,7 @@ export const DashboardPage = ({ equity }) => {
               </InfoBox>
 
               {/* === Prediction trend === */}
-              <InfoTitle>Prediction trend</InfoTitle>
+              <InfoTitle>{'Prediction trend (Beta)'}</InfoTitle>
               <InfoBox>
                 {!isNullOrEmpty(equityDetails.priceTrend) && (
                   <Chart
@@ -157,6 +176,27 @@ export const DashboardPage = ({ equity }) => {
                     options={{ ...PRICE_TREND_CHART }}
                     rootProps={{ 'data-testid': 'priceTrend' }}
                   />
+                )}
+              </InfoBox>
+              <InfoTitle>{'In next 30 days (Beta)'}</InfoTitle>
+              <InfoBox>
+                {!isNullOrEmpty(equityDetails.predictPrices) ? (
+                  <Chart
+                    width='100%'
+                    height={350}
+                    chartType='ScatterChart'
+                    loader={<LoadingSpinner isShow />}
+                    data={equityDetails.predictPrices}
+                    options={{
+                      backgroundColor: '#000',
+                      colors: ['cyan'],
+                    }}
+                    rootProps={{ 'data-testid': 'predictPrice' }}
+                  />
+                ) : (
+                  <p className='text-center'>
+                    This stock doesn't have predict data yet
+                  </p>
                 )}
               </InfoBox>
             </div>

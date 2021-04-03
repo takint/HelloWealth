@@ -18,6 +18,7 @@ export const ENDPOINTS = {
   refreshToken: `${API_BASE}rest-auth/token/refresh/`,
   userPorfolio: `${API_BASE}porfolio/`,
   userTransaction: `${API_BASE}transaction/`,
+  stockPrediction: `${API_BASE}prediction/`,
 }
 
 const APIKEY = 'zcvxJsWzSufs6KeNMbpauritS1UTGh2h' //'24e6fb3517msh440342105a0dcf5p10d467jsn8387aa179d81'
@@ -214,6 +215,11 @@ export const createUserTrans = async (token, userData) => {
     false,
     token
   )
+}
+
+// get stock prediction
+export const getStockPrediction = async (token, symbol = '') => {
+  return await apiCall(`${ENDPOINTS.stockPrediction}${symbol}`, null, 'get', false, token)
 }
 
 /* ================================ Financial APIs ============================= */
