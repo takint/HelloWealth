@@ -40,7 +40,7 @@ export const UserAssetBox = ({ onBuy, onSell, assets, onNewInfoLoaded }) => {
       setLoading(false)
     }
 
-    if (!loading && assetListDetails.length === 0) {
+    if (!loading && assetListDetails.length === 0 && assets.length !== 0) {
       loadEquityData()
     }
   }, [assets, assetListDetails, loading, onNewInfoLoaded])

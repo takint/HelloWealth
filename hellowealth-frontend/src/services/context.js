@@ -16,7 +16,7 @@ export const initialUserContext = {
   isAuthorized: false,
   assetEquities: [],
   watchedEquities: [],
-  accountBalance: 6010.00,
+  accountBalance: 0,
   setContext: () => {}, // - context updater function
 }
 

@@ -3,7 +3,7 @@ import { Formik } from 'formik'
 import { Form } from 'reactstrap'
 import { Link, useHistory } from 'react-router-dom'
 import { ErrorMsg, FormGroup, FormInput } from '../styles/global.styles'
-import { signUp, updateUser } from '../services/api'
+import { signUp, updateUser, createUserPorfolio } from '../services/api'
 import { UserContext } from '../services/context'
 import { dynamicValidation, isNullOrEmpty } from '../services/helper'
 import { setCookie, JWT_COOKIE } from '../services/cookies'
@@ -60,6 +60,15 @@ export const RegisterPage = ({ pageHeader, errorMessage }) => {
         pk: newUser.pk,
         first_name: newUser.first_name,
         last_name: newUser.last_name,
+      })
+
+      // Create user portfolio
+      await createUserPorfolio(response.access_token, {
+        alerts: [],
+        assetEquities: [],
+        watchedEquities: [],
+        accountBalance: 0,
+        user: newUser.pk,
       })
 
       userContext.setContext({

@@ -28,6 +28,11 @@ export const UserBalanceBox = ({ token, accountBalance, assetList }) => {
         delete transRes.ok
         delete transRes.statusCode
 
+        if (transRes.length === 0) {
+          setLoadingBalance(false)
+          return
+        }
+
         let firstId = transRes[0].id
         let lastId = transRes[0].id
 
@@ -40,33 +45,38 @@ export const UserBalanceBox = ({ token, accountBalance, assetList }) => {
           ])
         })
 
+        let firstTrans = transRes.find((trans) => trans.id === firstId)
+        let lastTrans = transRes.find((trans) => trans.id === lastId)
+
+        let firstBalance = parseFloat(firstTrans.balance)
+        let lastBalance = parseFloat(lastTrans.balance)
+
         let balanceFromStock = 0
         assetList.forEach((stock) => {
           let stockValue = stock.buyPrice * stock.quantityHold
           balanceFromStock += stockValue ? stockValue : 0
         })
 
-        let firstTrans = transRes.find((trans) => trans.id === firstId)
-        let lastTrans = transRes.find((trans) => trans.id === lastId)
-        let firstBalance = parseFloat(firstTrans.balance)
-        let lastBalance = parseFloat(lastTrans.balance)
         let diffAmount = lastBalance + balanceFromStock - firstBalance
-        let newChanged = (diffAmount / firstBalance) * 100
+        let newChanged =
+          firstBalance !== 0 ? (diffAmount / firstBalance) * 100 : 0
 
         setAmountChanged(diffAmount)
         setBalanceChanged(newChanged)
         setPorfolioValue(firstBalance + diffAmount)
+        setBalanceDataset(nBalanceDataset)
       } else if (transRes.statusCode === 401) {
         userContext.setContext(initialUserContext)
         history.push('/')
       }
 
-      setBalanceDataset(nBalanceDataset)
       setLoadingBalance(false)
     }
 
-    loadUserData()
-  }, [token, accountBalance, assetList, history, userContext])
+    if (userContext.accountBalance !== 0) {
+      loadUserData()
+    }
+  }, [token, assetList, history, userContext])
 
   return (
     <>
@@ -86,25 +96,27 @@ export const UserBalanceBox = ({ token, accountBalance, assetList }) => {
         </PriceBadge>
       </p>
       <br />
-      <InfoBox>
-        <Chart
-          width={'100%'}
-          height={'200px'}
-          chartType='AreaChart'
-          legendToggle={true}
-          loader={<LoadingSpinner isShow />}
-          data={balanceDataset}
-          options={{
-            height: 150,
-            legend: 'none',
-            colors: ['#538135'], //#b91c1c
-            vAxis: {
-              minValue: 3,
-            },
-          }}
-          rootProps={{ 'data-testid': '1' }}
-        />
-      </InfoBox>
+      {balanceDataset.length > 0 && (
+        <InfoBox>
+          <Chart
+            width={'100%'}
+            height={'200px'}
+            chartType='AreaChart'
+            legendToggle={true}
+            loader={<LoadingSpinner isShow />}
+            data={balanceDataset}
+            options={{
+              height: 150,
+              legend: 'none',
+              colors: ['#538135'], //#b91c1c
+              vAxis: {
+                minValue: 3,
+              },
+            }}
+            rootProps={{ 'data-testid': '1' }}
+          />
+        </InfoBox>
+      )}
     </>
   )
 }
