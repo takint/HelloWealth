@@ -1,0 +1,7 @@
+yfinance
+matplotlib
+tensorflow
+keras
+scikit-learn
+pymongo
+dnspython
