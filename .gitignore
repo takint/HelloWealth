@@ -350,5 +350,7 @@ MigrationBackup/
 .ionide/
 hellowealth-backend/env/
 *.eslintcache
+hellowealth-backend/static/
+hellowealth-backend/.ebextensions/
 hellowealth-stockPrediction/.idea/
 hellowealth-stockPrediction/venv/
