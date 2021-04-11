@@ -42,14 +42,16 @@ export const DashboardPage = ({ equity }) => {
       let equityInfo = await getEquityInfo(selectedEquity.data.symbol)
 
       if (equityInfo.price !== null) {
-        // Currently we only run example prediction for MSFT
-        if (selectedEquity.data.symbol === 'MSFT') {
-          let predictRes = await getStockPrediction(userContext.token)
+        let predictRes = await getStockPrediction(
+          userContext.token,
+          selectedEquity.data.symbol
+        )
 
-          if (predictRes.ok) {
-            delete predictRes.ok
-            delete predictRes.statusCode
+        if (predictRes.ok) {
+          delete predictRes.ok
+          delete predictRes.statusCode
 
+          if (predictRes.length > 0) {
             const predictPrices = [['Dates', 'Predicted Price']]
 
             predictRes.forEach((price) => {

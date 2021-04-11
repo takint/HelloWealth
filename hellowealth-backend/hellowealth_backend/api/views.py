@@ -116,10 +116,20 @@ class StockPredictionApiView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     client = pymongo.MongoClient("mongodb+srv://hellowealth-app:xWVR6rro6WE1FiOa@hellowealth.wnyrs.mongodb.net/stock_db?retryWrites=true&w=majority")
 
-    def get(self, request, *args, **kwargs):
+    def get_predict_data(self, symbol):
         db = self.client.stock_db
+        return {
+            'MSFT': db.p_msft,
+            'TWTR': db.p_twtr,
+            'MDB': db.p_mdb,
+        }.get(symbol, None)
+
+    def get(self, request, symbol, *args, **kwargs):
+        data = self.get_predict_data(symbol)
         predict_list = []
-        for item in db.p_msft.find():
-            predict_list.append([str(item["date"]), item["Close"]])
+
+        if data:
+            for item in data.find():
+                predict_list.append([str(item["date"]), item["Close"]])
 
         return Response(predict_list, status=status.HTTP_200_OK)

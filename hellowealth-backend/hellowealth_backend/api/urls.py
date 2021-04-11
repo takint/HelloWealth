@@ -10,5 +10,5 @@ from hellowealth_backend.api.views import (
 urlpatterns = [
     path('porfolio/', UserPorfolioApiView.as_view()),
     path('transaction/', TradeTransactionApiView.as_view()),
-    path('prediction/', StockPredictionApiView.as_view()),
+    path('prediction/<str:symbol>', StockPredictionApiView.as_view()),
 ]
