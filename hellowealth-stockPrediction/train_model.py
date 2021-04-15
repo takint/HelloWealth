@@ -51,9 +51,9 @@ def save_predict_to_mongo(p_ac, from_date, to_date):
 
     db = 'stock_db'
     collection_name = p_stock.lower()
-    cluster_name = "hellowealth.wnyrs"
-    mongodb_user = "test"
-    mongodb_pass = "1111"
+    cluster_name = "clustername"
+    mongodb_user = ""
+    mongodb_pass = ""
 
     client = pymongo.MongoClient(
         "mongodb+srv://{}:{}@{}.mongodb.net/{}?retryWrites=true&w=majority".format(mongodb_user,
@@ -80,9 +80,9 @@ def save_predict_to_mongo(p_ac, from_date, to_date):
 def get_data_from_mongo(from_date, to_date):
     db = 'stock_db'
     collection_name = p_stock.lower()
-    cluster_name = "hellowealth.wnyrs"
-    mongodb_user = "test"
-    mongodb_pass = "1111"
+    cluster_name = "clustername"
+    mongodb_user = ""
+    mongodb_pass = ""
     client = pymongo.MongoClient(
         "mongodb+srv://{}:{}@{}.mongodb.net/{}?retryWrites=true&w=majority".format(mongodb_user,
                                                                            mongodb_pass, cluster_name, db))

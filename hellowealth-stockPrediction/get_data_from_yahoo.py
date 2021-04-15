@@ -6,9 +6,9 @@ stock='AC'
 to_date = '2021-04-02'
 from_date = '2016-01-01'
 
-cluster_name = "hellowealth.wnyrs"
-mongodb_user = "test"
-mongodb_pass = "1111"
+cluster_name = "cluster"
+mongodb_user = ""
+mongodb_pass = ""
 db = 'stock_db'
 collection_name = stock.lower()
 

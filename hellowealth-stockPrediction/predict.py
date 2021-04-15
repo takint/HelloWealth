@@ -12,9 +12,9 @@ import datetime
 from pandas.tseries.offsets import BDay
 
 stock = "HPG"
-cluster_name = "hellowealth.wnyrs"
-mongodb_user = "test"
-mongodb_pass = "1111"
+cluster_name = "clustername"
+mongodb_user = ""
+mongodb_pass = ""
 db = 'stock_db'
 collection_name = 'p_' + stock.lower()
 client = pymongo.MongoClient(
@@ -25,9 +25,9 @@ collection = db[collection_name]
 collection.drop()
 
 def get_back_data_from_mongo(from_date, prev_days):
-    cluster_name = "hellowealth.wnyrs"
-    mongodb_user = "test"
-    mongodb_pass = "1111"
+    cluster_name = "clustername"
+    mongodb_user = ""
+    mongodb_pass = ""
     db = 'stock_db'
     collection_name = stock.lower()
 
