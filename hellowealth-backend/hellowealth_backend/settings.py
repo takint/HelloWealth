@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'aa4f8782-a2f8-49b6-ac1d-e4649f98a4af'
+SECRET_KEY = 'SECRET_KEY'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -94,11 +94,10 @@ WSGI_APPLICATION = 'hellowealth_backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'postgreshellowealth',
-        'HOST': 'hellowealth-db.ctiat5mvuqoy.us-east-1.rds.amazonaws.com', 
-         #old server: 'hellowealth-db.ckxity1ytiaj.us-east-1.rds.amazonaws.com',
+        'NAME': '',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '', 
         'PORT': '5432',
     }
 }

@@ -114,7 +114,7 @@ class TradeTransactionApiView(APIView):
 
 class StockPredictionApiView(APIView):
     permission_classes = [permissions.IsAuthenticated]
-    client = pymongo.MongoClient("mongodb+srv://hellowealth-app:xWVR6rro6WE1FiOa@hellowealth.wnyrs.mongodb.net/stock_db?retryWrites=true&w=majority")
+    client = pymongo.MongoClient("mongodb_url='mongodb")
 
     def get_predict_data(self, symbol):
         db = self.client.stock_db
