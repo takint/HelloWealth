@@ -341,19 +341,19 @@ export const parseWatchedEquity = (equityDetails) => {
   }
 
   if (equityDetails.price) {
-    watchListItem.minPrice = equityDetails.price.regularMarketDayLow.raw
-    watchListItem.buyPrice = equityDetails.price.regularMarketPrice.raw
-    watchListItem.todayPrice = equityDetails.price.postMarketPrice.raw
+    watchListItem.minPrice = equityDetails.price.regularMarketDayLow.raw || 0
+    watchListItem.buyPrice = equityDetails.price.regularMarketPrice.raw || 0
+    watchListItem.todayPrice = equityDetails.price.postMarketPrice.raw || 0
     watchListItem.changedPercent =
-      equityDetails.price.regularMarketChangePercent.raw
+      equityDetails.price.regularMarketChangePercent.raw || 0
     watchListItem.changedPercentOpen =
-      equityDetails.price.regularMarketChangePercent.raw
-    watchListItem.highPrice = equityDetails.price.regularMarketDayHigh.raw
-    watchListItem.lowPrice = equityDetails.price.regularMarketDayLow.raw
-    watchListItem.openPrice = equityDetails.price.regularMarketOpen.raw
-    watchListItem.closePrice = equityDetails.price.postMarketPrice.raw
+      equityDetails.price.regularMarketChangePercent.raw || 0
+    watchListItem.highPrice = equityDetails.price.regularMarketDayHigh.raw || 0
+    watchListItem.lowPrice = equityDetails.price.regularMarketDayLow.raw || 0
+    watchListItem.openPrice = equityDetails.price.regularMarketOpen.raw || 0
+    watchListItem.closePrice = equityDetails.price.postMarketPrice.raw || 0
     watchListItem.changedPercentClose =
-      equityDetails.price.postMarketChangePercent.raw
+      equityDetails.price.postMarketChangePercent.raw || 0
   }
 
   return watchListItem
