@@ -1,4 +1,4 @@
-# HelloWealth (CSIS 4495 Apply Research - Douglas College)
+# HelloWealth
 
 ## 1. Introduction
 Project Hello Wealth is an educational application for investment especially in stock trading.
