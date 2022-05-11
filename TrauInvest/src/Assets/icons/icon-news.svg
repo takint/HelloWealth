@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="45px" height="53px" viewBox="0 0 45 53" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>icon-news</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <filter x="-2.3%" y="-2.1%" width="104.7%" height="104.3%" filterUnits="objectBoundingBox" id="filter-1">
+            <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="1.5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.12 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="App" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="More-/-Home" transform="translate(-166.000000, -153.000000)" fill="#058D4A">
+            <g id="menu-items" filter="url(#filter-1)" transform="translate(16.000000, 132.000000)">
+                <g id="Tile-/-Agent-/-Hoz-Copy-3" transform="translate(118.000000, 0.000000)">
+                    <g id="icon-news" transform="translate(35.000000, 23.000000)">
+                        <path d="M33.8,0 C36.6718807,0 39,2.33806853 39,5.22222222 L39,41.7777778 C39,44.6619315 36.6718807,47 33.8,47 L5.2,47 C2.3281193,47 0,44.6619315 0,41.7777778 L0,5.22222222 C0,2.33806853 2.3281193,0 5.2,0 L33.8,0 Z M33.7083333,4 L5.29166667,4 C4.65756195,4 4.13017838,4.45987542 4.02081048,5.06632336 L4,5.3 L4,41.7 C4,42.3381957 4.4569275,42.8689818 5.05948795,42.9790553 L5.29166667,43 L33.7083333,43 C34.342438,43 34.8698216,42.5401246 34.9791895,41.9336766 L35,41.7 L35,5.3 C35,4.66180429 34.5430725,4.13101824 33.9405121,4.02094474 L33.7083333,4 Z" id="Rectangle" fill-rule="nonzero"></path>
+                        <rect id="Rectangle" x="8" y="8" width="23" height="13" rx="2"></rect>
+                        <path d="M28.9705882,27 C30.0914014,27 31,27.8954305 31,29 C31,30.012522 30.2365248,30.8493092 29.2459674,30.9817424 L28.9705882,31 L10.0294118,31 C8.9085986,31 8,30.1045695 8,29 C8,27.987478 8.76347521,27.1506908 9.75403261,27.0182576 L10.0294118,27 L28.9705882,27 Z" id="Line-Copy" fill-rule="nonzero"></path>
+                        <path d="M28.9705882,35 C30.0914014,35 31,35.8954305 31,37 C31,38.012522 30.2365248,38.8493092 29.2459674,38.9817424 L28.9705882,39 L10.0294118,39 C8.9085986,39 8,38.1045695 8,37 C8,35.987478 8.76347521,35.1506908 9.75403261,35.0182576 L10.0294118,35 L28.9705882,35 Z" id="Line-Copy-2" fill-rule="nonzero"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

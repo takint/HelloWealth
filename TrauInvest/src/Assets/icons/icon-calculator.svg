@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="46px" height="54px" viewBox="0 0 46 54" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: sketchtool 64 (101010) - https://sketch.com -->
+    <title>04B0D8CD-D19F-4AE5-BD90-BA5B1B6B301E</title>
+    <desc>Created with sketchtool.</desc>
+    <defs>
+        <filter x="-2.3%" y="-2.1%" width="104.7%" height="104.3%" filterUnits="objectBoundingBox" id="filter-1">
+            <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="1.5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.12 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="App" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="More-/-Home" transform="translate(-107.000000, -408.000000)" fill="#058D4A">
+            <g id="menu-items" filter="url(#filter-1)" transform="translate(16.000000, 132.000000)">
+                <g id="Tile-/-Agent-/-Hoz-Copy-9" transform="translate(59.000000, 256.000000)">
+                    <g id="icon-calculator" transform="translate(35.000000, 22.000000)">
+                        <path d="M34.6666667,0 C37.6121853,0 40,2.38781467 40,5.33333333 L40,42.6666667 C40,45.6121853 37.6121853,48 34.6666667,48 L5.33333333,48 C2.38781467,48 0,45.6121853 0,42.6666667 L0,5.33333333 C0,2.38781467 2.38781467,0 5.33333333,0 L34.6666667,0 Z M34.6666667,4 L5.33333333,4 C4.67877363,4 4.13437768,4.47166709 4.02148179,5.09366498 L4,5.33333333 L4,42.6666667 C4,43.3212264 4.47166709,43.8656223 5.09366498,43.9785182 L5.33333333,44 L34.6666667,44 C35.3212264,44 35.8656223,43.5283329 35.9785182,42.906335 L36,42.6666667 L36,5.33333333 C36,4.67877363 35.5283329,4.13437768 34.906335,4.02148179 L34.6666667,4 Z" id="Rectangle" fill-rule="nonzero"></path>
+                        <rect id="Rectangle" x="8" y="9" width="24" height="5" rx="2"></rect>
+                        <circle id="Oval" cx="11" cy="21" r="3"></circle>
+                        <circle id="Oval-Copy-3" cx="11" cy="29" r="3"></circle>
+                        <circle id="Oval-Copy-6" cx="11" cy="37" r="3"></circle>
+                        <circle id="Oval-Copy" cx="29" cy="21" r="3"></circle>
+                        <circle id="Oval-Copy-4" cx="29" cy="29" r="3"></circle>
+                        <circle id="Oval-Copy-7" cx="29" cy="37" r="3"></circle>
+                        <circle id="Oval-Copy-2" cx="20" cy="21" r="3"></circle>
+                        <circle id="Oval-Copy-5" cx="20" cy="29" r="3"></circle>
+                        <circle id="Oval-Copy-8" cx="20" cy="37" r="3"></circle>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

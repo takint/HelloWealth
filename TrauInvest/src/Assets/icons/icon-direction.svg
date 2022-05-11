@@ -1,0 +1,90 @@
+<svg
+    width='59'
+    height='55'
+    viewBox='0 0 59 55'
+    version='1.1'
+    xmlns='http://www.w3.org/2000/svg'
+  >
+    <defs>
+      <filter
+        x='-2.6%'
+        y='-9.2%'
+        width='105.2%'
+        height='118.5%'
+        filterUnits='objectBoundingBox'
+        id='filter-1'
+      >
+        <feOffset
+          dx='3'
+          dy='3'
+          in='SourceAlpha'
+          result='shadowOffsetOuter1'
+        ></feOffset>
+        <feGaussianBlur
+          stdDeviation='1.5'
+          in='shadowOffsetOuter1'
+          result='shadowBlurOuter1'
+        ></feGaussianBlur>
+        <feColorMatrix
+          values='0 0 0 0 0.203921569   0 0 0 0 0.215686275   0 0 0 0 0.250980392  0 0 0 0.05 0'
+          type='matrix'
+          in='shadowBlurOuter1'
+          result='shadowMatrixOuter1'
+        ></feColorMatrix>
+        <feMerge>
+          <feMergeNode in='shadowMatrixOuter1'></feMergeNode>
+          <feMergeNode in='SourceGraphic'></feMergeNode>
+        </feMerge>
+      </filter>
+    </defs>
+    <g
+      id='Desktop'
+      stroke='none'
+      strokeWidth='1'
+      fill='none'
+      fillRule='evenodd'
+    >
+      <g
+        id='Research-/-Address-Information'
+        transform='translate(-136.000000, -3846.000000)'
+        stroke='#058D4A'
+        strokeWidth='2'
+      >
+        <g
+          id='Tile-/-Research-/-Know-More'
+          transform='translate(100.000000, 3806.000000)'
+        >
+          <g filter='url(#filter-1)' id='icon---nearby'>
+            <g transform='translate(38.000000, 41.000000)'>
+              <g
+                id='Icon---nearby'
+                transform='translate(23.500000, 10.500000) rotate(-270.000000) translate(-23.500000, -10.500000) translate(19.000000, -13.000000)'
+              >
+                <polygon
+                  id='Rectangle'
+                  points='0 0 9 0 9 42 4.33129883 47 -1.59872116e-14 42'
+                ></polygon>
+              </g>
+              <g
+                id='Icon---nearby-Copy'
+                transform='translate(25.500000, 22.500000) rotate(-90.000000) translate(-25.500000, -22.500000) translate(21.000000, -1.000000)'
+              >
+                <polygon
+                  id='Rectangle'
+                  points='0 0 9 0 9 42 4.33129883 47 -1.59872116e-14 42'
+                ></polygon>
+              </g>
+              <polyline
+                id='Path-4'
+                points='20 29.2995605 20 47 29 47 29 29.2995605'
+              ></polyline>
+              <polyline
+                id='Path-5'
+                points='20 3.97802734 20 0 29 0 29 3.97802734'
+              ></polyline>
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+  </svg>
